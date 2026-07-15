@@ -3,116 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FiveM Team - Support Log</title>
+    <title>FiveM Team - Support Log & Archiv</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-        body {
-            background-color: #0f0f12;
-            color: #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .wrapper {
-            width: 100%;
-            max-width: 550px;
-            background: #17171c;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            border: 1px solid #ff4444; /* FiveM Rot/Orange-Vibe */
-        }
-        h1 {
-            text-align: center;
-            color: #ff4444;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        p.subtitle {
-            text-align: center;
-            color: #a0aec0;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #cbd5e1;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            background-color: #202027;
-            border: 1px solid #3f3f46;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #ff4444;
-        }
-        textarea {
-            resize: vertical;
-            height: 100px;
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #ff4444;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: background-color 0.2s, transform 0.1s;
-        }
-        button:hover {
-            background-color: #ff2222;
-        }
-        button:active {
-            transform: scale(0.98);
-        }
-        .status-msg {
-            margin-top: 15px;
-            text-align: center;
-            font-weight: bold;
-            display: none;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0f0f12; color: #e2e8f0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .wrapper { width: 100%; max-width: 800px; background: #17171c; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); border: 1px solid #ff4444; margin-bottom: 30px; }
+        h1, h2 { text-align: center; color: #ff4444; margin-bottom: 10px; text-transform: uppercase; }
+        p.subtitle { text-align: center; color: #a0aec0; font-size: 0.9rem; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 600; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 12px; background-color: #202027; border: 1px solid #3f3f46; border-radius: 6px; color: #fff; font-size: 1rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #ff4444; }
+        textarea { resize: vertical; height: 80px; }
+        button { width: 100%; padding: 14px; background-color: #ff4444; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button:hover { background-color: #ff2222; }
+        .status-msg { margin-top: 15px; text-align: center; font-weight: bold; display: none; }
+        
+        /* Tabellen Styling */
+        .table-wrapper { width: 100%; max-width: 1000px; background: #17171c; padding: 20px; border-radius: 12px; border: 1px solid #3f3f46; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px; border-bottom: 1px solid #232329; font-size: 0.95rem; }
+        th { background-color: #202027; color: #ff4444; text-transform: uppercase; font-size: 0.85rem; }
+        tr:hover { background-color: #1f1f26; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <h1>FiveM Support-Log</h1>
-    <p class="subtitle">Trage hier deine abgeschlossenen Tickets für die Teamleitung ein.</p>
+    <p class="subtitle">Trage hier bearbeitete Fälle und Personen für die Teamleitung ein.</p>
     
     <form id="supportForm">
         <div class="form-group">
-            <label for="teamler">Dein Discord-Name & ID</label>
-            <input type="text" id="teamler" placeholder="z.B. MaxMustermann#1234" required>
+            <label for="teamler">Dein Name / ID (Supporter)</label>
+            <input type="text" id="teamler" placeholder="z.B. Supporter Max" required>
         </div>
 
         <div class="form-group">
-            <label for="ticketId">Ticket-Nummer / ID</label>
-            <input type="text" id="ticketId" placeholder="z.B. #0815" required>
+            <label for="spieler">Name / ID der bearbeiteten Person (Wer brauchte Hilfe?)</label>
+            <input type="text" id="spieler" placeholder="z.B. Kevin_Alvarez [ID 45]" required>
         </div>
 
         <div class="form-group">
@@ -123,13 +52,13 @@
                 <option value="Fail-RP / Power-RP">Fail-RP / Power-RP</option>
                 <option value="Combat Logging">Combat Logging</option>
                 <option value="Erstattung / IC-Hilfe">Erstattung / IC-Hilfe</option>
-                <option value="Sonstiges">Sonstiges (Siehe Beschreibung)</option>
+                <option value="Sonstiges">Sonstiges</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="beschreibung">Kurze Beschreibung (Was wurde gemacht?)</label>
-            <textarea id="beschreibung" placeholder="Spieler ID 44 hat RDM begangen, Situation geklärt..." required></textarea>
+            <textarea id="beschreibung" placeholder="Spieler hat die Regeln missachtet, Situation im Support geklärt..." required></textarea>
         </div>
 
         <div class="form-group">
@@ -140,72 +69,104 @@
                 <option value="Schriftliche Verwarnung">Schriftliche Verwarnung</option>
                 <option value="Temporärer Ban">Temporärer Ban</option>
                 <option value="Permanenter Ban">Permanenter Ban</option>
-                <option value="Erfolgreich geklärt (Keine Strafe)">Erfolgreich geklärt (Keine Strafe)</option>
+                <option value="Erfolgreich geklärt (Keine Strafe)">Erfolgreich geklärt</option>
             </select>
         </div>
 
         <button type="submit" id="submitBtn">Eintrag absenden</button>
     </form>
-    
     <div id="statusMsg" class="status-msg"></div>
 </div>
 
-<script>
-    // ⚠️ HIER DEINEN DISCORD WEBHOOK LINK ZWISCHEN DIE ANFÜHRUNGSZEICHEN EINFÜGEN!
-    const DISCORD_WEBHOOK_URL = "HIER_DEINEN_WEBHOOK_LINK_EINFÜGEN";
+<div class="table-wrapper">
+    <h2>Abgeschlossene Einträge (Live)</h2>
+    <p class="subtitle" style="margin-bottom: 15px;">Hier sieht die Teamleitung alle erstellten Einträge für Upranks</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Datum</th>
+                <th>Supporter</th>
+                <th>Bearbeitete Person</th>
+                <th>Art</th>
+                <th>Beschreibung</th>
+                <th>Sanktion</th>
+            </tr>
+        </thead>
+        <tbody id="logTableBody">
+            <tr>
+                <td colspan="6" style="text-align: center; color: #a0aec0;">Lade Einträge...</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
+<script>
+    // GOOGLE WEB-APP URL (Deine persönliche API)
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxezzhZVLTZCOM6kBjLe0u6qM63T_KXAB160rZ-tBdKKGQ4Rp81AfDUoAkLPKYtzCgyqg/exec";
+
+    // Einträge beim Laden der Seite anzeigen
+    function loadLogs() {
+        fetch(GOOGLE_SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('logTableBody');
+            tbody.innerHTML = "";
+            if(!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Noch keine Einträge vorhanden.</td></tr>`;
+                return;
+            }
+            // Zeige die neuesten Einträge oben an
+            data.reverse().forEach(row => {
+                const date = new Date(row[0]).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${date}</td>
+                        <td style="font-weight: bold; color: #ff4444;">${row[1]}</td>
+                        <td>${row[2]}</td>
+                        <td><span style="background: #202027; padding: 4px 8px; border-radius: 4px;">${row[3]}</span></td>
+                        <td>${row[4]}</td>
+                        <td style="color: #4ade80;">${row[5]}</td>
+                    </tr>
+                `;
+            });
+        }).catch(() => {
+            document.getElementById('logTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Fehler beim Laden der Einträge.</td></tr>`;
+        });
+    }
+
+    // Formular absenden
     document.getElementById('supportForm').addEventListener('submit', function(e) {
         e.preventDefault();
-        
         const submitBtn = document.getElementById('submitBtn');
         const statusMsg = document.getElementById('statusMsg');
         
         submitBtn.disabled = true;
-        submitBtn.innerText = "Wird gesendet...";
+        submitBtn.innerText = "Wird gespeichert...";
 
-        // Daten aus dem Formular auslesen
-        const teamler = document.getElementById('teamler').value;
-        const ticketId = document.getElementById('ticketId').value;
-        const art = document.getElementById('art').value;
-        const beschreibung = document.getElementById('beschreibung').value;
-        const strafe = document.getElementById('strafe').value;
-
-        // Discord Embed Nachricht bauen
-        const requestBody = {
-            embeds: [{
-                title: "🔴 NEUER SUPPORT-EINTRAG",
-                color: 16728132, // FiveM Rot Code
-                fields: [
-                    { name: "👤 Supporter:", value: teamler, inline: true },
-                    { name: "🎫 Ticket-ID:", value: ticketId, inline: true },
-                    { name: "📂 Art des Supports:", value: art, inline: false },
-                    { name: "📝 Beschreibung:", value: beschreibung, inline: false },
-                    { name: "⚖️ Ergebnis / Strafe:", value: strafe, inline: false }
-                ],
-                footer: { text: "FiveM Server Log System" },
-                timestamp: new Date().toISOString()
-            }]
+        const payload = {
+            supporter: document.getElementById('teamler').value,
+            spieler: document.getElementById('spieler').value,
+            art: document.getElementById('art').value,
+            beschreibung: document.getElementById('beschreibung').value,
+            sanktion: document.getElementById('strafe').value
         };
 
-        // Per Webhook an Discord senden
-        fetch(DISCORD_WEBHOOK_URL, {
+        fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify(payload)
         })
-        .then(response => {
-            if (response.ok) {
-                statusMsg.style.color = "#4ade80";
-                statusMsg.innerText = "✅ Eintrag erfolgreich an Discord gesendet!";
-                statusMsg.style.display = "block";
-                document.getElementById('supportForm').reset();
-            } else {
-                throw new Error();
-            }
+        .then(() => {
+            statusMsg.style.color = "#4ade80";
+            statusMsg.innerText = "✅ Eintrag erfolgreich auf der Webseite gespeichert!";
+            statusMsg.style.display = "block";
+            document.getElementById('supportForm').reset();
+            setTimeout(loadLogs, 1500); // Tabelle nach 1.5 Sek neu laden
         })
         .catch(() => {
             statusMsg.style.color = "#f87171";
-            statusMsg.innerText = "❌ Fehler beim Senden. Webhook-URL geprüft?";
+            statusMsg.innerText = "❌ Fehler beim Speichern.";
             statusMsg.style.display = "block";
         })
         .finally(() => {
@@ -213,6 +174,9 @@
             submitBtn.innerText = "Eintrag absenden";
         });
     });
+
+    // Initiales Laden beim Aufruf der Seite
+    loadLogs();
 </script>
 
 </body>
