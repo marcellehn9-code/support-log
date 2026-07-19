@@ -22,8 +22,16 @@
         /* Header-Layout mit Logo-Integration */
         header { padding-bottom: 25px; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #2f3e46; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
         header h1 { color: #45f3ff; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
-        .header-logo { width: 90px; height: 90px; border-radius: 12px; border: 1px solid #45f3ff; box-shadow: 0 0 15px rgba(69,243,255,0.2); }
         
+        /* Modernes alternatives Logo-Design aus purem CSS, falls Bild blockiert */
+        .logo-placeholder { width: 100px; height: 100px; background: #151a21; border: 2px solid #45f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; color: #45f3ff; text-shadow: 0 0 10px rgba(69,243,255,0.6); box-shadow: 0 0 20px rgba(69,243,255,0.3); animation: pulse 2s infinite; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(69,243,255,0.3); }
+            50% { transform: scale(1.03); box-shadow: 0 0 30px rgba(69,243,255,0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(69,243,255,0.3); }
+        }
+
         .main-layout { display: flex; gap: 30px; }
         .column-left { flex: 3; }
         .column-right { flex: 1; min-width: 350px; }
@@ -75,20 +83,19 @@
         .log-item { background: #131921; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #45f3ff; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
         .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 10px; }
 
-        /* Login-Screen Styling mit zentriertem Logo */
+        /* Login-Screen Styling */
         #login-screen { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; justify-content: center; align-items: center; z-index: 9999; }
         .login-box { background: #1f2833; padding: 40px; border-radius: 12px; border: 2px solid #45f3ff; width: 400px; text-align: center; box-shadow: 0 0 25px rgba(69,243,255,0.3); display: flex; flex-direction: column; align-items: center; }
         .login-box h2 { color: #45f3ff; margin-top: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        .login-logo { width: 130px; height: 130px; border-radius: 16px; border: 2px solid #45f3ff; box-shadow: 0 0 20px rgba(69,243,255,0.4); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN POPUP MIT INTEGRIERTEM LOGO-GIF -->
+<!-- LOGIN POPUP MIT INLINE-LOGO-DESIGN (GARANTIERT IMMER SICHTBAR) -->
 <div id="login-screen">
     <div class="login-box">
-        <!-- Das Malora-City Logo wird hier geladen -->
-        <img class="login-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City Logo">
+        <!-- Das 'M' für Malora City als geniales, leuchtendes Code-Logo -->
+        <div class="logo-placeholder">M</div>
         <h2>Leitungs Login</h2>
         <input type="text" id="login-username" placeholder="Benutzername">
         <input type="password" id="login-password" placeholder="Passwort">
@@ -107,8 +114,7 @@
     <!-- SEITE 1: DASHBOARD -->
     <div id="page-dashboard" class="page-content active-page">
         <header>
-            <!-- Kleines animiertes Logo im Header des Dashboards -->
-            <img class="header-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City">
+            <div class="logo-placeholder" style="width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 5px;">M</div>
             <h1>Support & Einreise - Live Zentrale</h1>
         </header>
 
@@ -137,7 +143,7 @@
     <!-- SEITE 2: LOG-ARCHIV -->
     <div id="page-archiv" class="page-content">
         <header>
-            <img class="header-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City">
+            <div class="logo-placeholder" style="width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 5px;">M</div>
             <h1>Management Log-Archiv</h1>
         </header>
         
