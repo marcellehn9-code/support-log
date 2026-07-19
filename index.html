@@ -6,7 +6,7 @@
     <title>Support Tickets - Management</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0b0c10; color: #c5c6c7; padding: 20px; }
+        body { background-color: #0b0c10; color: #c5c6c7; padding: 20px; display: none; }
         .container { max-width: 1400px; margin: 0 auto; }
         
         /* Google-Style Haupt-Tabs ganz oben */
@@ -19,8 +19,10 @@
         .page-content { display: none; background: #1f2833; border: 1px solid #2f3e46; border-radius: 0 0 8px 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .page-content.active-page { display: block; }
         
-        header { padding-bottom: 25px; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #2f3e46; }
+        /* Header-Layout mit Logo-Integration */
+        header { padding-bottom: 25px; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #2f3e46; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
         header h1 { color: #45f3ff; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
+        .header-logo { width: 90px; height: 90px; border-radius: 12px; border: 1px solid #45f3ff; box-shadow: 0 0 15px rgba(69,243,255,0.2); }
         
         .main-layout { display: flex; gap: 30px; }
         .column-left { flex: 3; }
@@ -72,20 +74,41 @@
         
         .log-item { background: #131921; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #45f3ff; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
         .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 10px; }
+
+        /* Login-Screen Styling mit zentriertem Logo */
+        #login-screen { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: #1f2833; padding: 40px; border-radius: 12px; border: 2px solid #45f3ff; width: 400px; text-align: center; box-shadow: 0 0 25px rgba(69,243,255,0.3); display: flex; flex-direction: column; align-items: center; }
+        .login-box h2 { color: #45f3ff; margin-top: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .login-logo { width: 130px; height: 130px; border-radius: 16px; border: 2px solid #45f3ff; box-shadow: 0 0 20px rgba(69,243,255,0.4); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Google-Style Tabs ganz oben -->
+<!-- LOGIN POPUP MIT INTEGRIERTEM LOGO-GIF -->
+<div id="login-screen">
+    <div class="login-box">
+        <!-- Das Malora-City Logo wird hier geladen -->
+        <img class="login-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City Logo">
+        <h2>Leitungs Login</h2>
+        <input type="text" id="login-username" placeholder="Benutzername">
+        <input type="password" id="login-password" placeholder="Passwort">
+        <button class="action-btn" onclick="checkLogin()">Einloggen</button>
+        <div id="login-error" style="color: #d9534f; margin-top: 10px; display: none; font-weight: bold;">Falsche Daten, Bro!</div>
+    </div>
+</div>
+
+<div class="container" id="main-interface" style="display: none;">
+    <!-- Google-Style Tabs -->
     <div class="main-nav">
         <div class="nav-tab active-tab" onclick="switchPage('dashboard')">📊 Live Steuerungs-Dashboard</div>
         <div class="nav-tab" onclick="switchPage('archiv')">🗄️ Strukturiertes Log-Archiv</div>
     </div>
 
-    <!-- SEITE 1: DASHBOARD (ALLES WAS JETZT GERADE IST) -->
+    <!-- SEITE 1: DASHBOARD -->
     <div id="page-dashboard" class="page-content active-page">
         <header>
+            <!-- Kleines animiertes Logo im Header des Dashboards -->
+            <img class="header-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City">
             <h1>Support & Einreise - Live Zentrale</h1>
         </header>
 
@@ -111,36 +134,28 @@
         </div>
     </div>
 
-    <!-- SEITE 2: LOG-ARCHIV (SORTIERTE EXTRA FELDER) -->
+    <!-- SEITE 2: LOG-ARCHIV -->
     <div id="page-archiv" class="page-content">
         <header>
+            <img class="header-logo" src="https://cdn.discordapp.com/attachments/1063861673565356052/1266035889209872489/27770.gif" onerror="this.src='27770.gif'" alt="Malora City">
             <h1>Management Log-Archiv</h1>
         </header>
         
         <div class="card">
             <h2>Sortierte Log-Datenbank</h2>
-            <p style="font-size: 0.85rem; color: #a0aec0; margin-bottom: 15px;">Hier werden alle getätigten Aktionen sauber nach Kategorien getrennt aufgelistet.</p>
-            
             <div class="archive-grid">
-                <!-- BOX 1: UPRANK LOGS -->
                 <div class="archive-box box-upranks">
                     <h3>🔼 Upranks & Rollen-Logs</h3>
                     <div id="log-upranks"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
                 </div>
-
-                <!-- BOX 2: TEAM KICKS -->
                 <div class="archive-box box-kicks">
                     <h3>❌ Team Kicks & Austritte</h3>
                     <div id="log-kicks"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
                 </div>
-
-                <!-- BOX 3: SUPPORTS & TICKETS -->
                 <div class="archive-box box-supports">
                     <h3>🎫 Support- & Ticket-Änderungen</h3>
                     <div id="log-supports"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
                 </div>
-
-                <!-- BOX 4: EINREISEN & BANNE -->
                 <div class="archive-box box-einreisen">
                     <h3>🛃 Einreisen, Banne & Feedback</h3>
                     <div id="log-einreisen"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
@@ -215,7 +230,6 @@
             <option value="Head Analyst">Head Analyst</option>
             <option value="Analyst">Analyst</option>
             <option value="Probe Analyst">Probe Analyst</option>
-            <option value="Einreisebeamter">Einreisebeamter</option>
             <option value="Head Administrator">Head Administrator</option>
             <option value="Sr. Administrator">Sr. Administrator</option>
             <option value="Administrator">Administrator</option>
@@ -227,6 +241,7 @@
             <option value="Sr. Supporter">Sr. Supporter</option>
             <option value="Supporter">Supporter</option>
             <option value="Test Supporter">Test Supporter</option>
+            <option value="Einreisebeamter">Einreisebeamter</option>
         </select>
 
         <label>Detaillierten Log/Kommentar schreiben</label>
@@ -249,9 +264,9 @@
         
         <label>Rolle</label>
         <select id="add-role">
-            <option value="Einreisebeamter">Einreisebeamter</option>
             <option value="Test Supporter">Test Supporter</option>
             <option value="Supporter">Supporter</option>
+            <option value="Einreisebeamter">Einreisebeamter</option>
             <option value="Probe Analyst">Probe Analyst</option>
             <option value="Analyst">Analyst</option>
             <option value="Test - Moderator">Test - Moderator</option>
@@ -261,6 +276,18 @@
 </div>
 
 <script>
+    function checkLogin() {
+        let u = document.getElementById('login-username').value;
+        let p = document.getElementById('login-password').value;
+        if(u === "Maloracity" && p === "Maloracity110") {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-interface').style.display = 'block';
+            document.body.style.display = 'block';
+        } else {
+            document.getElementById('login-error').style.display = 'block';
+        }
+    }
+
     let teamData = {
         "Projektleitung": ["@MC | Lyrox™"],
         "Stv. Projektleitung": ["@MC | DonXVitoo™", "@MC | Tobi👀"],
@@ -274,7 +301,6 @@
         "Head Analyst": ["@MC | Hassan", "<@727523575950606396>", "@MC | Ling.js", "@MC | Turbo.dll"],
         "Analyst": ["<@562260580988092475>", "<@772069989582110732>", "@MC | Lias", "@MC | Ling.js", "<@148278991352164494>"],
         "Probe Analyst": [],
-        "Einreisebeamter": ["@MC | ★ R Y Z E ★", "@MC | Aspy", "@MC | HIRA", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Kellox", "@MC | MD-02 368kk", "@MC | syzulex", "@MC | Nick.exe"],
         "Head Administrator": ["@MC | Pauli™"],
         "Sr. Administrator": ["@MC | Patrick 👀"],
         "Administrator": ["@MC | HIRA", "@MC | Lenny"],
@@ -285,14 +311,14 @@
         "Head Supporter": [],
         "Sr. Supporter": ["@MC | Kellox"],
         "Supporter": ["@MC | Aspy", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Klaisnax", "@MC | MD-01 Tim Dlnaro", "@MC | MD-02 368kk", "<@381082149803261954>", "@MC | Tristan Tiefprais", "@MC | Vito Nacé", "@MC I Jonas👀", "@MC I Louis", "@MC I Nick.exe"],
-        "Test Supporter": ["<@1456434493236711499>", "@MC | Dave Shanke", "<@704072513617133638>", "<@1066692526158905346>", "<@1266035889209872489>", "@MC | Luca Abi", "@MC | Nick", "@MC | syzulex", "@MC l Jay"]
+        "Test Supporter": ["<@1456434493236711499>", "@MC | Dave Shanke", "<@704072513617133638>", "<@1066692526158905346>", "<@1266035889209872489>", "@MC | Luca Abi", "@MC | Nick", "@MC | syzulex", "@MC l Jay"],
+        "Einreisebeamter": ["@MC | ★ R Y Z E ★", "@MC | Aspy", "@MC | HIRA", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Kellox", "@MC | MD-02 368kk", "@MC | syzulex", "@MC | Nick.exe"]
     };
 
     let stats = {};
     let textLogs = [];
     let currentSelectedMember = "";
 
-    // Seiten-Umschalter (Google Webseiten Style)
     function switchPage(pageId) {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active-tab'));
         document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active-page'));
@@ -371,7 +397,6 @@
         stats[currentSelectedMember][statType] = Math.max(0, stats[currentSelectedMember][statType] + val);
         document.getElementById(`count-${statType}`).value = stats[currentSelectedMember][statType];
         
-        // Zähler-Änderungen im Hintergrund loggen
         let category = (statType === 'tickets' || statType === 'supports') ? 'support' : 'einreisen';
         addLogItem(`${currentSelectedMember}: ${statType.toUpperCase()} ${val > 0 ? '+' + val : val}`, category);
         
@@ -403,7 +428,7 @@
         teamData[newRole].push(currentSelectedMember);
         stats[currentSelectedMember].role = newRole;
         
-        addLogItem(`🔼 BEFÖRDERUNG: ${currentSelectedMember} zugewiesen zu ${newRole}`, 'uprank');
+        addLogItem(`🔼 BEFÖRDERUNG: ${currentSelectedMember} von ${oldRole} zu ${newRole}`, 'uprank');
         renderTeam();
         calculateAiUpranks();
     }
@@ -422,7 +447,7 @@
         teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
         delete stats[currentSelectedMember];
         
-        addLogItem(`❌ TEAM-KICK: ${currentSelectedMember} wurde aus dem Team entfernt.`, 'kick');
+        addLogItem(`❌ TEAM-KICK: ${currentSelectedMember} wurde entfernt.`, 'kick');
         closeModal();
         renderTeam();
         calculateAiUpranks();
@@ -437,14 +462,13 @@
         teamData[role].push(name);
         stats[name] = { tickets: 0, supports: 0, feedbacks: 0, einreisen: 0, banne: 0, role: role };
         
-        addLogItem(`📥 NEUES MITGLIED: ${name} ist als ${role} beigetreten.`, 'uprank');
+        addLogItem(`📥 NEUES MITGLIED: ${name} als ${role} beigetreten.`, 'uprank');
         closeAddModal();
         document.getElementById('add-name').value = "";
         renderTeam();
         calculateAiUpranks();
     }
 
-    // Sortiertes Logsystem
     function addLogItem(message, category) {
         let now = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
         textLogs.unshift({time: now, msg: message, id: Date.now(), cat: category});
@@ -464,11 +488,7 @@
             einreisen: document.getElementById('log-einreisen')
         };
         
-        // Zurücksetzen
-        for(let key in containers) {
-            containers[key].innerHTML = "";
-        }
-        
+        for(let key in containers) { containers[key].innerHTML = ""; }
         let counts = { uprank: 0, kick: 0, support: 0, einreisen: 0 };
         
         textLogs.forEach(l => {
@@ -481,11 +501,8 @@
             }
         });
         
-        // Leere Boxen abfangen
         for(let key in containers) {
-            if(counts[key] === 0) {
-                containers[key].innerHTML = '<p style="color:#555; font-size:0.85rem;">Keine Einträge.</p>';
-            }
+            if(counts[key] === 0) { containers[key].innerHTML = '<p style="color:#555; font-size:0.85rem;">Keine Einträge.</p>'; }
         }
     }
 
@@ -500,15 +517,13 @@
             if (user.tickets + user.supports >= 5 || user.feedbacks >= 3 || totalEinreisen >= 10) {
                 suggestions.push({
                     name: name,
-                    reason: `Starke Werte (🎫 ${user.tickets} | 🛠️ ${user.supports} | ⭐ ${user.feedbacks} | 🛃 ${totalEinreisen}).`
+                    reason: `Starke Leistungswerte auf der aktuellen Position (🎫 ${user.tickets} | 🛠️ ${user.supports} | ⭐ ${user.feedbacks} | 🛃 ${totalEinreisen}).`
                 });
             }
         }
 
         if(suggestions.length === 0) {
-            aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                Vergib Punkte, um automatische Uprank-Tipps zu erhalten.
-            </div>`;
+            aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">Vergib Punkte, um automatische Uprank-Tipps zu erhalten.</div>`;
         } else {
             let html = "";
             suggestions.forEach(s => {
@@ -521,6 +536,7 @@
         }
     }
 
+    document.body.style.display = 'block';
     initStats();
     renderTeam();
 </script>
