@@ -3,349 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Tickets - Leitung</title>
+    <title>Support Tickets - Management</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: #0a0a0c; color: #e2e8f0; padding: 20px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0b0c10; color: #c5c6c7; padding: 30px; }
+        .container { max-width: 1400px; margin: 0 auto; }
         
-        .container { max-width: 1400px; margin: 0 auto; display: block; }
+        header { border-bottom: 2px solid #45f3ff; padding-bottom: 25px; margin-bottom: 35px; text-align: center; }
+        header h1 { color: #45f3ff; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
         
-        header { border-bottom: 2px solid #ff4444; padding-bottom: 20px; margin-bottom: 35px; text-align: center; }
-        header h1 { color: #ff4444; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
-        header p { color: #a0aec0; margin-top: 5px; font-size: 1rem; }
-
-        .main-layout { width: 100%; margin-bottom: 30px; }
-        .column-left { width: 68%; float: left; }
-        .column-right { width: 30%; float: right; }
-        .clearfix { clear: both; }
-
-        .card { background: #13131a; border-radius: 12px; border: 1px solid #23232f; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .card h2 { color: #ff4444; text-transform: uppercase; font-size: 1.25rem; margin-bottom: 20px; border-left: 4px solid #ff4444; padding-left: 10px; }
-
-        .form-row { width: 100%; margin-bottom: 15px; }
-        .form-col-50 { width: 49%; display: inline-block; vertical-align: top; }
-        .form-col-50:last-child { margin-left: 2%; }
-        label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 12px; background-color: #1a1a24; border: 1px solid #2d2d3d; border-radius: 6px; color: #fff; font-size: 0.95rem; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #ff4444; }
+        .main-layout { display: flex; gap: 30px; }
+        .column-left { flex: 3; }
+        .column-right { flex: 1; min-width: 350px; }
         
-        .btn-group { margin-top: 15px; }
-        button { background-color: #ff4444; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        button:hover { background-color: #e03333; }
+        .card { background: #1f2833; border-radius: 12px; border: 1px solid #2f3e46; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .card h2 { color: #45f3ff; text-transform: uppercase; font-size: 1.3rem; margin-bottom: 20px; border-left: 4px solid #45f3ff; padding-left: 10px; }
         
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background: #2a2a35; color: #cbd5e1; }
-        .badge-success { background: #1b4332; color: #52b788; }
-        .badge-danger { background: #4c1d1d; color: #f87171; }
-        .badge-star { background: #5c4d1d; color: #fbbf24; }
+        /* Grid für Rollen */
+        .role-section { border-bottom: 1px solid #2f3e46; padding: 15px 0; }
+        .role-title { font-weight: bold; color: #66fcf1; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px; }
+        .member-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        
+        .member-card { background: #0b0c10; border: 1px solid #45f3ff; padding: 12px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; min-width: 150px; text-align: center; }
+        .member-card:hover { transform: translateY(-3px); box-shadow: 0 0 10px rgba(69,243,255,0.4); }
+        .member-name { font-weight: bold; font-size: 0.95rem; color: #fff; }
+        .member-stats-preview { font-size: 0.75rem; color: #a0aec0; margin-top: 5px; }
 
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px 10px; border-bottom: 1px solid #1f1f2e; text-align: left; font-size: 0.9rem; }
-        th { background: #1a1a24; color: #a0aec0; text-transform: uppercase; font-size: 0.8rem; font-weight: bold; }
-        tr:hover { background: #181822; }
-
-        .role-section { border-bottom: 1px solid #1f1f2e; padding: 12px 0; }
-        .role-name { font-weight: bold; color: #ff4444; font-size: 0.9rem; text-transform: uppercase; }
-        .role-members { color: #cbd5e1; font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
-
-        .ai-item { background: #181c24; border: 1px solid #2b384e; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .ai-header { font-weight: bold; color: #4ade80; font-size: 1rem; margin-bottom: 5px; }
+        /* Uprank AI */
+        .ai-item { background: #101712; border: 1px solid #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .ai-header { font-weight: bold; color: #4ade80; margin-bottom: 5px; }
         .ai-reason { font-size: 0.85rem; color: #a0aec0; }
+        
+        /* Modal / Popup */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #1f2833; border: 2px solid #45f3ff; border-radius: 12px; padding: 30px; width: 500px; max-width: 90%; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2f3e46; padding-bottom: 10px; }
+        .modal-header h3 { color: #66fcf1; font-size: 1.4rem; }
+        .close-btn { color: #fff; cursor: pointer; font-size: 1.5rem; }
+        
+        /* Counter Stepper */
+        .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #0b0c10; padding: 10px 15px; border-radius: 6px; }
+        .counter-controls { display: flex; align-items: center; gap: 15px; }
+        .counter-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #45f3ff; color: #0b0c10; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        .counter-value { font-size: 1.1rem; font-weight: bold; color: #fff; width: 30px; text-align: center; }
 
-        .tab-bar { border-bottom: 1px solid #23232f; margin-bottom: 20px; }
-        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; color: #a0aec0; font-weight: bold; border-bottom: 2px solid transparent; margin-right: 10px; }
-        .tab.active { color: #ff4444; border-bottom: 2px solid #ff4444; }
+        input, select, textarea { width: 100%; padding: 10px; background: #0b0c10; border: 1px solid #2f3e46; border-radius: 6px; color: #fff; margin-bottom: 15px; }
+        button.action-btn { background: #45f3ff; color: #0b0c10; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
+        button.delete-btn { background: #d9534f; color: #fff; }
+        
+        /* Protokoll-Liste */
+        .log-item { background: #0b0c10; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #45f3ff; display: flex; justify-content: space-between; align-items: center; }
+        .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>Support Tickets - Verwaltung & Uprank AI</h1>
-        <p>Bro-Edition • Protokolliere Supports, erfasse Feedback & sieh sofort wer ein Uprank verdient hat</p>
+        <h1>Support Tickets - Zentrale</h1>
     </header>
 
     <div class="main-layout">
-        <!-- LINKER BEREICH -->
+        <!-- LINKER BEREICH: TEAM INTERAKTIV -->
         <div class="column-left">
             <div class="card">
-                <div class="tab-bar">
-                    <span class="tab active" onclick="switchForm('support')">⚡ Support loggen</span>
-                    <span class="tab" onclick="switchForm('feedback')">⭐ Team-Feedback erfassen</span>
-                </div>
-
-                <!-- FORM 1: SUPPORT LOGGEN -->
-                <div id="form-support">
-                    <div class="form-row">
-                        <div class="form-col-50">
-                            <label for="sup-member">Welches Teammitglied hat geholfen?</label>
-                            <select id="sup-member">
-                                <option disabled selected>Mitglied auswählen...</option>
-                                <optgroup label="Test Supporter">
-                                    <option>@ginzo_kass16</option><option>@Munzich</option><option>@Flakes</option>
-                                    <option>@Gabriel_Patronss</option><option>@MC | IDropMyTable</option><option>@MC Jamal</option>
-                                    <option>@MC Tim Dinaro</option><option>@MC| 368kk</option><option>@MC | Romero</option>
-                                    <option>@MC syzulex</option><option>@MC Louis</option><option>@MC Nick.exe</option>
-                                </optgroup>
-                                <optgroup label="Supporter">
-                                    <option>@Kingston G2</option><option>@1511677208563945603</option>
-                                </optgroup>
-                                <optgroup label="Sr. Supporter">
-                                    <option>@MC | Kellox</option><option>@JohanH</option>
-                                </optgroup>
-                                <optgroup label="Moderatoren">
-                                    <option>@MC | HIRA</option><option>@MC★RYZE★</option><option>@MC | zonex</option><option>@Andre</option><option>@MCILiam</option>
-                                </optgroup>
-                                <optgroup label="Administratoren">
-                                    <option>@MC I Eliasdwd</option><option>@MC | Patrick 00</option><option>@Paul</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <div class="form-col-50">
-                            <label for="sup-player">Spieler Name / ID (Wer brauchte Hilfe?)</label>
-                            <input type="text" id="sup-player" placeholder="z.B. Tom_Block [ID 187]">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-col-50">
-                            <label for="sup-type">Was für ein Support war es?</label>
-                            <select id="sup-type">
-                                <option>Spieler-Support / Hilfe</option>
-                                <option>Fraktions-Angelegenheit</option>
-                                <option>IC-Hilfe / Erstattung</option>
-                                <option>Regelverstoß / Sanktion</option>
-                            </select>
-                        </div>
-                        <div class="form-col-50">
-                            <label for="sup-status">Ergebnis des Supports</label>
-                            <select id="sup-status">
-                                <option value="Erfolgreich">Erfolgreich geklärt</option>
-                                <option value="Verwarnung">Mündliche/Schriftliche Verwarnung</option>
-                                <option value="Bann">Ausschluss / Bann erteilt</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <label for="sup-note">Details zum Fall</label>
-                        <textarea id="sup-note" placeholder="Kurze Notiz, was besprochen oder geklärt wurde..."></textarea>
-                    </div>
-
-                    <div class="btn-group">
-                        <button onclick="saveLog('support')">Support-Eintrag speichern</button>
-                    </div>
-                </div>
-
-                <!-- FORM 2: FEEDBACK ERFASSEN -->
-                <div id="form-feedback" style="display:none;">
-                    <div class="form-row">
-                        <div class="form-col-50">
-                            <label for="feed-member">Welches Teammitglied bekommt Feedback?</label>
-                            <select id="feed-member">
-                                <option disabled selected>Mitglied auswählen...</option>
-                                <option>@ginzo_kass16</option><option>@Munzich</option><option>@Flakes</option>
-                                <option>@Gabriel_Patronss</option><option>@MC | IDropMyTable</option><option>@MC Jamal</option>
-                                <option>@MC Tim Dinaro</option><option>@MC | Kellox</option><option>@JohanH</option>
-                                <option>@Kingston G2</option><option>@MC | HIRA</option><option>@MC★RYZE★</option><option>@MC | zonex</option>
-                                <option>@Andre</option><option>@MCILiam</option><option>@MC Louis</option><option>@MC Nick.exe</option>
-                            </select>
-                        </div>
-                        <div class="form-col-50">
-                            <label for="feed-rating">Art des Feedbacks</label>
-                            <select id="feed-rating">
-                                <option value="positiv">Sehr Positiv (+ Lob erhalten)</option>
-                                <option value="neutral">Neutral / Unauffällig</option>
-                                <option value="negativ">Negativ (- Beschwerde eingeholt)</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <label for="feed-reason">Wer gibt Feedback / Was ist der Grund?</label>
-                        <textarea id="feed-reason" placeholder="z.B. Lob von Usern wegen schnellem Support oder Beschwerde wegen Fehlverhalten..."></textarea>
-                    </div>
-
-                    <div class="btn-group">
-                        <button onclick="saveLog('feedback')">Feedback-Eintrag speichern</button>
-                    </div>
+                <h2>Team-Übersicht (Für Steuerung anklicken)</h2>
+                <button class="action-btn" style="margin-bottom:20px; background:#66fcf1;" onclick="openAddMemberModal()">＋ Neues Teammitglied hinzufügen</button>
+                <div id="team-roster">
+                    <!-- Wird dynamisch geladen -->
                 </div>
             </div>
-
-            <!-- TABELLE -->
+            
             <div class="card">
-                <h2>Gesamtes Aktivitäts- & Fallprotokoll (Auf der Seite sichtbar)</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Zeit</th>
-                            <th>Teamler</th>
-                            <th>Typ / Details</th>
-                            <th>Spieler / Infos</th>
-                            <th>Status / Bewertung</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-table-body">
-                        <tr><td colspan="5" style="text-align:center; color:#a0aec0;">Noch keine Live-Einträge vorgenommen.</td></tr>
-                    </tbody>
-                </table>
+                <h2>Verlauf & Logs</h2>
+                <div id="log-list">
+                    <p style="text-align:center; color:#a0aec0;">Keine Protokolleinträge vorhanden.</p>
+                </div>
             </div>
         </div>
 
-        <!-- RECHTER BEREICH -->
+        <!-- RECHTER BEREICH: UPRANK AI -->
         <div class="column-right">
             <div class="card" style="border: 1px solid #4ade80; background: #0e1611;">
                 <h2 style="color: #4ade80; border-left-color: #4ade80;">🚀 Uprank AI Assistent</h2>
-                <p style="font-size:0.8rem; color:#a0aec0; margin-bottom:15px;">Analysiert Live-Daten & schlägt dir Beförderungen vor:</p>
                 <div id="ai-suggestions">
                     <div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                        Logge Supports und positives Feedback, damit das System dir sagt, wer ein Uprank verdient hat!
+                        Vergib Punkte oder Freitext-Feedback, um automatische Uprank-Tipps zu erhalten.
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <div class="card">
-                <h2>👥 Team-Rollenverteilung</h2>
-                <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
-                    <div class="role-section"><div class="role-name">Projektleitung</div><div class="role-members">@MC|Lyrox™</div></div>
-                    <div class="role-section"><div class="role-name">Stv. Projektleitung</div><div class="role-members">@Toastbrot</div></div>
-                    <div class="role-section"><div class="role-name">Teamleitung</div><div class="role-members">@MC|Paul, @ZmtxTV, @MC | CityNeko</div></div>
-                    <div class="role-section"><div class="role-name">Fraktionsverwaltungleitung</div><div class="role-members">@knobi, @MC| Sidney</div></div>
-                    <div class="role-section"><div class="role-name">Fraktionsverwaltung</div><div class="role-members">@MC Jaden, @Itz John</div></div>
-                    <div class="role-section"><div class="role-name">Dev-Team</div><div class="role-members">Knoppers.exe (Head), Exy.lua (Dev), @OnlyError (Jr.)</div></div>
-                    <div class="role-section"><div class="role-name">Head Administrator</div><div class="role-members">@Paul</div></div>
-                    <div class="role-section"><div class="role-name">Sr. Administrator</div><div class="role-members">@MC | Patrick 00</div></div>
-                    <div class="role-section"><div class="role-name">Test-Administrator</div><div class="role-members">@MC I Eliasdwd</div></div>
-                    <div class="role-section"><div class="role-name">Head Moderator</div><div class="role-members">@MCILiam</div></div>
-                    <div class="role-section"><div class="role-name">Moderator</div><div class="role-members">@MC | HIRA</div></div>
-                    <div class="role-section"><div class="role-name">Test - Moderator</div><div class="role-members">@MC★RYZE★, @MC | zonex, @Andre</div></div>
-                    <div class="role-section"><div class="role-name">Sr. Supporter</div><div class="role-members">@MC | Kellox, @JohanH</div></div>
-                    <div class="role-section"><div class="role-name">Supporter</div><div class="role-members">@Kingston G2, @1511677208563945603</div></div>
-                    <div class="role-section" style="border:none;"><div class="role-name">Test Supporter</div><div class="role-members" style="font-size:0.8rem;">@ginzo_kass16, @Munzich, @Flakes, @Gabriel_Patronss, @MC | IDropMyTable, @MC Jamal, @MC Tim Dinaro, @MC| 368kk, @MC | Romero, @MC syzulex, @MC Louis, @MC Nick.exe</div></div>
-                </div>
+<!-- MODAL: BEARBEITEN / PLUS-MINUS -->
+<div id="memberModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalMemberName">Name</h3>
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+        
+        <!-- Quick Counter (Plus/Minus) -->
+        <div class="counter-group">
+            <span>Tickets</span>
+            <div class="counter-controls">
+                <button class="counter-btn" onclick="adjustStat('tickets', -1)">-</button>
+                <span class="counter-value" id="count-tickets">0</span>
+                <button class="counter-btn" onclick="adjustStat('tickets', 1)">+</button>
             </div>
         </div>
-        <div class="clearfix"></div>
+        <div class="counter-group">
+            <span>Supports</span>
+            <div class="counter-controls">
+                <button class="counter-btn" onclick="adjustStat('supports', -1)">-</button>
+                <span class="counter-value" id="count-supports">0</span>
+                <button class="counter-btn" onclick="adjustStat('supports', 1)">+</button>
+            </div>
+        </div>
+        <div class="counter-group">
+            <span>Feedbacks</span>
+            <div class="counter-controls">
+                <button class="counter-btn" onclick="adjustStat('feedbacks', -1)">-</button>
+                <span class="counter-value" id="count-feedbacks">0</span>
+                <button class="counter-btn" onclick="adjustStat('feedbacks', 1)">+</button>
+            </div>
+        </div>
+
+        <hr style="border-color:#2f3e46; margin: 15px 0;">
+
+        <!-- Rolle & Adminaktionen -->
+        <label>Rolle ändern</label>
+        <select id="edit-role" onchange="changeMemberRole()">
+            <option value="Projektleitung">Projektleitung</option>
+            <option value="Stv. Projektleitung">Stv. Projektleitung</option>
+            <option value="Teamleitung">Teamleitung</option>
+            <option value="Stv. Teamleitung">Stv. Teamleitung</option>
+            <option value="Fraktionsverwaltungleitung">Fraktionsverwaltungleitung</option>
+            <option value="Fraktionsverwaltung">Fraktionsverwaltung</option>
+            <option value="Head Developer">Head Developer</option>
+            <option value="Developer">Developer</option>
+            <option value="Jr. Developer">Jr. Developer</option>
+            <option value="Head Administrator">Head Administrator</option>
+            <option value="Sr. Administrator">Sr. Administrator</option>
+            <option value="Administrator">Administrator</option>
+            <option value="Test-Administrator">Test-Administrator</option>
+            <option value="Head Moderator">Head Moderator</option>
+            <option value="Moderator">Moderator</option>
+            <option value="Test - Moderator">Test - Moderator</option>
+            <option value="Head Supporter">Head Supporter</option>
+            <option value="Sr. Supporter">Sr. Supporter</option>
+            <option value="Supporter">Supporter</option>
+            <option value="Test Supporter">Test Supporter</option>
+        </select>
+
+        <label>Detaillierten Log/Kommentar schreiben</label>
+        <textarea id="modal-text-log" placeholder="Zusätzliche Infos wie Verwarnungen, Lob-Notizen..."></textarea>
+        <button class="action-btn" onclick="saveTextLog()">Notiz hinzufügen</button>
+        
+        <button class="action-btn delete-btn" onclick="deleteMember()">Mitglied aus Team entfernen</button>
+    </div>
+</div>
+
+<!-- MODAL: HINZUFÜGEN -->
+<div id="addMemberModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Neues Mitglied hinzufügen</h3>
+            <span class="close-btn" onclick="closeAddModal()">&times;</span>
+        </div>
+        <label>Name / Discord-Tag</label>
+        <input type="text" id="add-name" placeholder="z.B. @MC | NeuerSupporter">
+        
+        <label>Rolle</label>
+        <select id="add-role">
+            <option value="Test Supporter">Test Supporter</option>
+            <option value="Supporter">Supporter</option>
+            <option value="Sr. Supporter">Sr. Supporter</option>
+            <option value="Test - Moderator">Test - Moderator</option>
+            <option value="Moderator">Moderator</option>
+        </select>
+        <button class="action-btn" onclick="addMember()">Hinzufügen</button>
     </div>
 </div>
 
 <script>
-    let logs = [];
-    let stats = {};
+    let teamData = {
+        "Projektleitung": ["@MC | Lyrox™"],
+        "Stv. Projektleitung": ["@MC | Tobi"],
+        "Teamleitung": ["@Lupik", "@highteam", "@MC | Paul", "<@1450184138303869061>"],
+        "Stv. Teamleitung": ["@MC | CityNeko"],
+        "Fraktionsverwaltungleitung": ["@MC | Knobi", "@MC | Sidney"],
+        "Fraktionsverwaltung": ["@MC | Jaden", "@MC | John"],
+        "Head Developer": ["@MC | Knoppers.exe"],
+        "Developer": ["@MC | Exy.lua"],
+        "Jr. Developer": ["@MC | onlyerror.dll"],
+        "Head Administrator": ["@MC | Pauli™"],
+        "Sr. Administrator": ["<@946805605123903568>"],
+        "Administrator": [],
+        "Test-Administrator": ["@MC | Matti", "@MC I Eliasdwd"],
+        "Head Moderator": ["@MC | Lenny", "@MC I Liam™"],
+        "Moderator": ["@MC | HIRA"],
+        "Test - Moderator": ["@MC | ★ R Y Z E ★", "@MC | zonex", "<@1063861673565356052>"],
+        "Head Supporter": [],
+        "Sr. Supporter": ["@MC | Kellox", "<@125268585821208878>"],
+        "Supporter": ["<@847848444244262932>", "@1511677208563945603"],
+        "Test Supporter": ["<@1456434493236711499>", "@MC | Aspy", "@MC | Dave Shanke", "<@704072513617133638>", "<@1437071380821704746>", "@MC | IDropMyTable", "@MC | Jamal", "<@1066692526158905346>", "@MC | Linus", "<@885630638521208843>", "<@1474795447028551700>", "@MC | MD-02 368kk", "@MC | Romero", "@MC | syzulex", "@MC | Vito Nacé", "@MC I Louis", "<@1244574047862526043>"]
+    };
 
-    function switchForm(type) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        if(type === 'support') {
-            document.querySelectorAll('.tab')[0].classList.add('active');
-            document.getElementById('form-support').style.display = 'block';
-            document.getElementById('form-feedback').style.display = 'none';
-        } else {
-            document.querySelectorAll('.tab')[1].classList.add('active');
-            document.getElementById('form-support').style.display = 'none';
-            document.getElementById('form-feedback').style.display = 'block';
+    let stats = {};
+    let textLogs = [];
+    let currentSelectedMember = "";
+
+    function initStats() {
+        for (let role in teamData) {
+            teamData[role].forEach(name => {
+                if (!stats[name]) stats[name] = { tickets: 0, supports: 0, feedbacks: 0, role: role };
+            });
         }
     }
 
-    function saveLog(type) {
-        let now = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-        let entry = { time: now, type: type };
-
-        if(type === 'support') {
-            let member = document.getElementById('sup-member').value;
-            let player = document.getElementById('sup-player').value || "Unbekannt";
-            let cat = document.getElementById('sup-type').value;
-            let status = document.getElementById('sup-status').value;
-            
-            if(!member || member.includes("auswählen")) return alert("Wähle ein Teammitglied aus!");
-            
-            entry.member = member;
-            entry.detail = cat;
-            entry.target = player;
-            entry.status = status;
-            
-            if(!stats[member]) stats[member] = { supports: 0, positiveFeed: 0, negativeFeed: 0 };
-            stats[member].supports += 1;
-            
-        } else {
-            let member = document.getElementById('feed-member').value;
-            let rating = document.getElementById('feed-rating').value;
-            let reason = document.getElementById('feed-reason').value || "Keine Begründung";
-            
-            if(!member || member.includes("auswählen")) return alert("Wähle ein Teammitglied aus!");
-            
-            entry.member = member;
-            entry.detail = "Feedback Erfassung";
-            entry.target = reason;
-            entry.status = rating;
-            
-            if(!stats[member]) stats[member] = { supports: 0, positiveFeed: 0, negativeFeed: 0 };
-            if(rating === 'positiv') stats[member].positiveFeed += 1;
-            if(rating === 'negativ') stats[member].negativeFeed += 1;
-        }
-
-        logs.unshift(entry);
-        renderLogs();
-        calculateAiUpranks();
+    function renderTeam() {
+        let container = document.getElementById('team-roster');
+        container.innerHTML = "";
         
-        document.getElementById('sup-player').value = '';
-        document.getElementById('sup-note').value = '';
-        document.getElementById('feed-reason').value = '';
+        for (let role in teamData) {
+            let section = document.createElement('div');
+            section.className = 'role-section';
+            
+            let title = document.createElement('div');
+            title.className = 'role-title';
+            title.innerText = role;
+            section.appendChild(title);
+            
+            let grid = document.createElement('div');
+            grid.className = 'member-grid';
+            
+            if(teamData[role].length === 0) {
+                grid.innerHTML = '<span style="color:#555; font-size:0.85rem;">Keine Mitglieder</span>';
+            } else {
+                teamData[role].forEach(name => {
+                    let mStats = stats[name] || { tickets: 0, supports: 0, feedbacks: 0 };
+                    let mCard = document.createElement('div');
+                    mCard.className = 'member-card';
+                    mCard.onclick = () => openModal(name);
+                    mCard.innerHTML = `<div class="member-name">${name}</div>
+                    <div class="member-stats-preview">🎫 ${mStats.tickets} | 🛠️ ${mStats.supports} | ⭐ ${mStats.feedbacks}</div>`;
+                    grid.appendChild(mCard);
+                });
+            }
+            section.appendChild(grid);
+            container.appendChild(section);
+        }
+    }
+
+    function openModal(name) {
+        currentSelectedMember = name;
+        document.getElementById('modalMemberName').innerText = name;
+        document.getElementById('count-tickets').innerText = stats[name].tickets;
+        document.getElementById('count-supports').innerText = stats[name].supports;
+        document.getElementById('count-feedbacks').innerText = stats[name].feedbacks;
+        document.getElementById('edit-role').value = stats[name].role;
+        document.getElementById('modal-text-log').value = "";
+        document.getElementById('memberModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('memberModal').style.display = 'none'; }
+    function openAddMemberModal() { document.getElementById('addMemberModal').style.display = 'flex'; }
+    function closeAddModal() { document.getElementById('addMemberModal').style.display = 'none'; }
+
+    function adjustStat(statType, val) {
+        if (!currentSelectedMember) return;
+        stats[currentSelectedMember][statType] = Math.max(0, stats[currentSelectedMember][statType] + val);
+        document.getElementById(`count-${statType}`).innerText = stats[currentSelectedMember][statType];
+        
+        // Automatischen System-Log generieren
+        let logMsg = `${currentSelectedMember}: ${statType.toUpperCase()} ${val > 0 ? '+' + val : val}`;
+        addLogItem(logMsg);
+        
+        renderTeam();
+        calculateAiUpranks();
+    }
+
+    function changeMemberRole() {
+        let newRole = document.getElementById('edit-role').value;
+        let oldRole = stats[currentSelectedMember].role;
+        
+        if(oldRole === newRole) return;
+        
+        teamData[oldRole] = teamData[oldRole].filter(n => n !== currentSelectedMember);
+        teamData[newRole].push(currentSelectedMember);
+        stats[currentSelectedMember].role = newRole;
+        
+        addLogItem(`Rolle von ${currentSelectedMember} geändert von ${oldRole} zu ${newRole}`);
+        renderTeam();
+        calculateAiUpranks();
+    }
+
+    function saveTextLog() {
+        let txt = document.getElementById('modal-text-log').value;
+        if(!txt.trim()) return;
+        addLogItem(`${currentSelectedMember}: ${txt}`);
+        document.getElementById('modal-text-log').value = "";
+    }
+
+    function deleteMember() {
+        if(!confirm(`Möchtest du ${currentSelectedMember} wirklich aus dem Team löschen?`)) return;
+        let role = stats[currentSelectedMember].role;
+        teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
+        delete stats[currentSelectedMember];
+        addLogItem(`${currentSelectedMember} wurde aus dem Team entfernt.`);
+        closeModal();
+        renderTeam();
+        calculateAiUpranks();
+    }
+
+    function addMember() {
+        let name = document.getElementById('add-name').value.trim();
+        let role = document.getElementById('add-role').value;
+        if(!name) return alert("Bitte Namen eingeben!");
+        
+        if(!teamData[role]) teamData[role] = [];
+        teamData[role].push(name);
+        stats[name] = { tickets: 0, supports: 0, feedbacks: 0, role: role };
+        
+        addLogItem(`${name} als ${role} zum Team hinzugefügt.`);
+        closeAddModal();
+        document.getElementById('add-name').value = "";
+        renderTeam();
+    }
+
+    function addLogItem(message) {
+        let now = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+        textLogs.unshift({time: now, msg: message, id: Date.now()});
+        renderLogs();
+    }
+
+    function removeLog(id) {
+        textLogs = textLogs.filter(l => l.id !== id);
+        renderLogs();
     }
 
     function renderLogs() {
+        let logDiv = document.getElementById('log-list');
+        if(textLogs.length === 0) {
+            logDiv.innerHTML = '<p style="text-align:center; color:#a0aec0;">Keine Protokolleinträge vorhanden.</p>';
+            return;
+        }
         let html = "";
-        logs.forEach(l => {
-            let badgeClass = "badge";
-            if(l.status === 'Erfolgreich' || l.status === 'positiv') badgeClass += " badge-success";
-            if(l.status === 'Bann' || l.status === 'negativ') badgeClass += " badge-danger";
-            
-            html += `<tr>
-                <td>${l.time}</td>
-                <td style="font-weight:bold; color:#ff4444;">${l.member}</td>
-                <td>${l.detail}</td>
-                <td style="color:#a0aec0;">${l.target}</td>
-                <td><span class="${badgeClass}">${l.status}</span></td>
-            </tr>`;
+        textLogs.forEach(l => {
+            html += `<div class="log-item">
+                <span><strong>[${l.time}]</strong> ${l.msg}</span>
+                <span class="log-delete" onclick="removeLog(${l.id})">&times; Löschen</span>
+            </div>`;
         });
-        document.getElementById('log-table-body').innerHTML = html;
+        logDiv.innerHTML = html;
     }
 
     function calculateAiUpranks() {
         let aiDiv = document.getElementById('ai-suggestions');
         let suggestions = [];
 
-        for (let member in stats) {
-            let data = stats[member];
-            // Wenn jemand 3 Supports geschafft hat ohne negative Einträge
-            if(data.supports >= 3 && data.negativeFeed === 0) {
+        for (let name in stats) {
+            let user = stats[name];
+            // Uprank-Voraussetzung flexibel: Ab 5 bearbeiteten Sachen oder 2 positiven Feedbacks
+            if((user.tickets + user.supports >= 5 || user.feedbacks >= 2) && user.role.includes("Test")) {
                 suggestions.push({
-                    name: member,
-                    reason: `Hohe Support-Aktivität (${data.supports} Fälle dokumentiert). Keine Beschwerden. Uprank prüfen!`
-                });
-            }
-            // Wenn jemand positives Leitungs-/User-Feedback erhalten hat
-            if(data.positiveFeed >= 1) {
-                suggestions.push({
-                    name: member,
-                    reason: `Hat sehr positives Feedback bzw. Lob erhalten. Reif für das nächste Level.`
+                    name: name,
+                    reason: `Starke Werte (${user.tickets} Tickets, ${user.supports} Supports, ${user.feedbacks} Feedbacks). Prüfung auf Vollmitgliedschaft empfohlen!`
                 });
             }
         }
 
         if(suggestions.length === 0) {
             aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                Sammle weiter Daten. Uprank AI wertet Leistungswerte im Hintergrund aus...
+                Vergib Punkte oder Freitext-Feedback, um automatische Uprank-Tipps zu erhalten.
             </div>`;
         } else {
             let html = "";
             suggestions.forEach(s => {
                 html += `<div class="ai-item">
-                    <div class="ai-header">🚀 ${s.name} <span class="badge badge-star">Uprank Tipp</span></div>
+                    <div class="ai-header">🚀 Uprank Tipp: ${s.name}</div>
                     <div class="ai-reason">${s.reason}</div>
                 </div>`;
             });
             aiDiv.innerHTML = html;
         }
     }
+
+    // Start
+    initStats();
+    renderTeam();
 </script>
 
 </body>
