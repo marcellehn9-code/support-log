@@ -19,12 +19,28 @@
         .page-content { display: none; background: #1f2833; border: 1px solid #2f3e46; border-radius: 0 0 8px 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .page-content.active-page { display: block; }
         
-        /* Header-Layout mit Logo-Integration */
-        header { padding-bottom: 25px; margin-bottom: 25px; text-align: center; border-bottom: 1px solid #2f3e46; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
-        header h1 { color: #45f3ff; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
+        /* Fetter Banner-Header oben im Dashboard */
+        header { 
+            padding: 40px 20px; 
+            margin-bottom: 25px; 
+            text-align: center; 
+            border: 1px solid #2f3e46; 
+            border-radius: 12px;
+            background: linear-gradient(rgba(11, 12, 16, 0.75), rgba(11, 12, 16, 0.75)), url('27772.png') center/cover no-repeat;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; 
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+        header h1 { color: #45f3ff; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
         
-        /* Modernes alternatives Logo-Design aus purem CSS, falls Bild blockiert */
-        .logo-placeholder { width: 100px; height: 100px; background: #151a21; border: 2px solid #45f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; color: #45f3ff; text-shadow: 0 0 10px rgba(69,243,255,0.6); box-shadow: 0 0 20px rgba(69,243,255,0.3); animation: pulse 2s infinite; }
+        /* Die Logo-Bilder mit festen Abmessungen */
+        .header-logo { width: 90px; height: 90px; border-radius: 12px; border: 1px solid #45f3ff; box-shadow: 0 0 15px rgba(69,243,255,0.2); object-fit: cover; }
+        
+        /* Fallback CSS-Design, wenn kein Bild lädt */
+        .logo-fallback { width: 100px; height: 100px; background: #151a21; border: 2px solid #45f3ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 900; color: #45f3ff; text-shadow: 0 0 10px rgba(69,243,255,0.6); box-shadow: 0 0 20px rgba(69,243,255,0.3); animation: pulse 2s infinite; }
         
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 20px rgba(69,243,255,0.3); }
@@ -87,15 +103,19 @@
         #login-screen { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; justify-content: center; align-items: center; z-index: 9999; }
         .login-box { background: #1f2833; padding: 40px; border-radius: 12px; border: 2px solid #45f3ff; width: 400px; text-align: center; box-shadow: 0 0 25px rgba(69,243,255,0.3); display: flex; flex-direction: column; align-items: center; }
         .login-box h2 { color: #45f3ff; margin-top: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .login-logo-container { width: 130px; height: 130px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; }
+        .login-logo { width: 130px; height: 130px; border-radius: 16px; border: 2px solid #45f3ff; box-shadow: 0 0 20px rgba(69,243,255,0.4); object-fit: cover; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN POPUP MIT INLINE-LOGO-DESIGN (GARANTIERT IMMER SICHTBAR) -->
+<!-- LOGIN POPUP MIT AUTOMATISCHEM FALLBACK -->
 <div id="login-screen">
     <div class="login-box">
-        <!-- Das 'M' für Malora City als geniales, leuchtendes Code-Logo -->
-        <div class="logo-placeholder">M</div>
+        <div class="login-logo-container" id="login-logo-box">
+            <!-- Versucht das GIF zu laden, wechselt bei Fehler automatisch zum CSS-Logo -->
+            <img class="login-logo" src="27770.gif" onerror="handleLogoError(this)" alt="Malora City Logo">
+        </div>
         <h2>Leitungs Login</h2>
         <input type="text" id="login-username" placeholder="Benutzername">
         <input type="password" id="login-password" placeholder="Passwort">
@@ -114,7 +134,9 @@
     <!-- SEITE 1: DASHBOARD -->
     <div id="page-dashboard" class="page-content active-page">
         <header>
-            <div class="logo-placeholder" style="width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 5px;">M</div>
+            <div id="header-logo-box-1" style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+                <img class="header-logo" src="27770.gif" onerror="handleHeaderLogoError(this, 1)" alt="Malora City">
+            </div>
             <h1>Support & Einreise - Live Zentrale</h1>
         </header>
 
@@ -143,7 +165,9 @@
     <!-- SEITE 2: LOG-ARCHIV -->
     <div id="page-archiv" class="page-content">
         <header>
-            <div class="logo-placeholder" style="width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 5px;">M</div>
+            <div id="header-logo-box-2" style="width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+                <img class="header-logo" src="27770.gif" onerror="handleHeaderLogoError(this, 2)" alt="Malora City">
+            </div>
             <h1>Management Log-Archiv</h1>
         </header>
         
@@ -282,6 +306,17 @@
 </div>
 
 <script>
+    // Fallback-Logik: Falls das GIF blockiert wird, wird sofort das CSS-Logo gebaut
+    function handleLogoError(img) {
+        let box = document.getElementById('login-logo-box');
+        box.innerHTML = '<div class="logo-fallback">M</div>';
+    }
+    
+    function handleHeaderLogoError(img, id) {
+        let box = document.getElementById('header-logo-box-' + id);
+        box.innerHTML = '<div class="logo-fallback" style="width: 70px; height: 70px; font-size: 1.8rem; margin-bottom: 5px;">M</div>';
+    }
+
     function checkLogin() {
         let u = document.getElementById('login-username').value;
         let p = document.getElementById('login-password').value;
