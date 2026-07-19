@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FiveM Management Dashboard & Uprank AI</title>
+    <title>Support Tickets - Leitung</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background-color: #0a0a0c; color: #e2e8f0; padding: 20px; }
@@ -60,8 +60,8 @@
 
 <div class="container">
     <header>
-        <h1>FiveM Management System & Uprank AI</h1>
-        <p>Bro-Edition • Verwalte dein Team, logge Feedbacks & erkenne vollautomatisch wer Beförderungen verdient hat</p>
+        <h1>Support Tickets - Verwaltung & Uprank AI</h1>
+        <p>Bro-Edition • Protokolliere Supports, erfasse Feedback & sieh sofort wer ein Uprank verdient hat</p>
     </header>
 
     <div class="main-layout">
@@ -69,15 +69,15 @@
         <div class="column-left">
             <div class="card">
                 <div class="tab-bar">
-                    <span class="tab active" onclick="switchForm('support')">⚡ Support / Ticket loggen</span>
+                    <span class="tab active" onclick="switchForm('support')">⚡ Support loggen</span>
                     <span class="tab" onclick="switchForm('feedback')">⭐ Team-Feedback erfassen</span>
                 </div>
 
-                <!-- FORM 1: TICKET LOGGING -->
+                <!-- FORM 1: SUPPORT LOGGEN -->
                 <div id="form-support">
                     <div class="form-row">
                         <div class="form-col-50">
-                            <label for="sup-member">Teammitglied (Wer hat bearbeitet?)</label>
+                            <label for="sup-member">Welches Teammitglied hat geholfen?</label>
                             <select id="sup-member">
                                 <option disabled selected>Mitglied auswählen...</option>
                                 <optgroup label="Test Supporter">
@@ -108,16 +108,16 @@
 
                     <div class="form-row">
                         <div class="form-col-50">
-                            <label for="sup-type">Support-Kategorie</label>
+                            <label for="sup-type">Was für ein Support war es?</label>
                             <select id="sup-type">
-                                <option>Spieler-Support (Ticket)</option>
+                                <option>Spieler-Support / Hilfe</option>
                                 <option>Fraktions-Angelegenheit</option>
                                 <option>IC-Hilfe / Erstattung</option>
                                 <option>Regelverstoß / Sanktion</option>
                             </select>
                         </div>
                         <div class="form-col-50">
-                            <label for="sup-status">Ergebnis / Status</label>
+                            <label for="sup-status">Ergebnis des Supports</label>
                             <select id="sup-status">
                                 <option value="Erfolgreich">Erfolgreich geklärt</option>
                                 <option value="Verwarnung">Mündliche/Schriftliche Verwarnung</option>
@@ -127,12 +127,12 @@
                     </div>
                     
                     <div class="form-row">
-                        <label for="sup-note">Notizen / Kurze Beschreibung</label>
-                        <textarea id="sup-note" placeholder="Was wurde im Support genau gemacht?"></textarea>
+                        <label for="sup-note">Details zum Fall</label>
+                        <textarea id="sup-note" placeholder="Kurze Notiz, was besprochen oder geklärt wurde..."></textarea>
                     </div>
 
                     <div class="btn-group">
-                        <button onclick="saveLog('support')">Fall eintragen</button>
+                        <button onclick="saveLog('support')">Support-Eintrag speichern</button>
                     </div>
                 </div>
 
@@ -140,7 +140,7 @@
                 <div id="form-feedback" style="display:none;">
                     <div class="form-row">
                         <div class="form-col-50">
-                            <label for="feed-member">Teammitglied bewerten</label>
+                            <label for="feed-member">Welches Teammitglied bekommt Feedback?</label>
                             <select id="feed-member">
                                 <option disabled selected>Mitglied auswählen...</option>
                                 <option>@ginzo_kass16</option><option>@Munzich</option><option>@Flakes</option>
@@ -151,36 +151,36 @@
                             </select>
                         </div>
                         <div class="form-col-50">
-                            <label for="feed-rating">Bewertung / Feedback-Typ</label>
+                            <label for="feed-rating">Art des Feedbacks</label>
                             <select id="feed-rating">
                                 <option value="positiv">Sehr Positiv (+ Lob erhalten)</option>
-                                <option value="neutral">Neutral / Standardleistung</option>
-                                <option value="negativ">Negativ (- Beschwerde / Fehlverhalten)</option>
+                                <option value="neutral">Neutral / Unauffällig</option>
+                                <option value="negativ">Negativ (- Beschwerde eingeholt)</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-row">
-                        <label for="feed-reason">Begründung für das Feedback</label>
-                        <textarea id="feed-reason" placeholder="z.B. Fällt positiv durch extrem schnelle Ticketbearbeitung auf."></textarea>
+                        <label for="feed-reason">Wer gibt Feedback / Was ist der Grund?</label>
+                        <textarea id="feed-reason" placeholder="z.B. Lob von Usern wegen schnellem Support oder Beschwerde wegen Fehlverhalten..."></textarea>
                     </div>
 
                     <div class="btn-group">
-                        <button onclick="saveLog('feedback')">Feedback speichern</button>
+                        <button onclick="saveLog('feedback')">Feedback-Eintrag speichern</button>
                     </div>
                 </div>
             </div>
 
             <!-- TABELLE -->
             <div class="card">
-                <h2>Aktivitäts- & Fallprotokoll</h2>
+                <h2>Gesamtes Aktivitäts- & Fallprotokoll (Auf der Seite sichtbar)</h2>
                 <table>
                     <thead>
                         <tr>
                             <th>Zeit</th>
                             <th>Teamler</th>
                             <th>Typ / Details</th>
-                            <th>Zielperson / Info</th>
+                            <th>Spieler / Infos</th>
                             <th>Status / Bewertung</th>
                         </tr>
                     </thead>
@@ -195,10 +195,10 @@
         <div class="column-right">
             <div class="card" style="border: 1px solid #4ade80; background: #0e1611;">
                 <h2 style="color: #4ade80; border-left-color: #4ade80;">🚀 Uprank AI Assistent</h2>
-                <p style="font-size:0.8rem; color:#a0aec0; margin-bottom:15px;">Analysiert eingegebene Daten & schlägt Beförderungen vor:</p>
+                <p style="font-size:0.8rem; color:#a0aec0; margin-bottom:15px;">Analysiert Live-Daten & schlägt dir Beförderungen vor:</p>
                 <div id="ai-suggestions">
                     <div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                        Sammle Daten. Logge Supports und positives Feedback, um Empfehlungen freizuschalten!
+                        Logge Supports und positives Feedback, damit das System dir sagt, wer ein Uprank verdient hat!
                     </div>
                 </div>
             </div>
@@ -315,16 +315,18 @@
 
         for (let member in stats) {
             let data = stats[member];
+            // Wenn jemand 3 Supports geschafft hat ohne negative Einträge
             if(data.supports >= 3 && data.negativeFeed === 0) {
                 suggestions.push({
                     name: member,
-                    reason: `Hohe Support-Aktivität (${data.supports} Tickets bearbeitet) ohne negative Vorfälle. Beförderung prüfen!`
+                    reason: `Hohe Support-Aktivität (${data.supports} Fälle dokumentiert). Keine Beschwerden. Uprank prüfen!`
                 });
             }
+            // Wenn jemand positives Leitungs-/User-Feedback erhalten hat
             if(data.positiveFeed >= 1) {
                 suggestions.push({
                     name: member,
-                    reason: `Hat herausragend positives Feedback/Lob erhalten. Reif für das nächste Level.`
+                    reason: `Hat sehr positives Feedback bzw. Lob erhalten. Reif für das nächste Level.`
                 });
             }
         }
