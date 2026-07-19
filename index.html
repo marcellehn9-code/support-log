@@ -6,7 +6,7 @@
     <title>Support Tickets - Management</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0b0c10; color: #c5c6c7; padding: 30px; }
+        body { background-color: #0b0c10; color: #c5c6c7; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; }
         
         header { border-bottom: 2px solid #45f3ff; padding-bottom: 25px; margin-bottom: 35px; text-align: center; }
@@ -19,7 +19,6 @@
         .card { background: #1f2833; border-radius: 12px; border: 1px solid #2f3e46; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .card h2 { color: #45f3ff; text-transform: uppercase; font-size: 1.3rem; margin-bottom: 20px; border-left: 4px solid #45f3ff; padding-left: 10px; }
         
-        /* Grid für Rollen */
         .role-section { border-bottom: 1px solid #2f3e46; padding: 15px 0; }
         .role-title { font-weight: bold; color: #66fcf1; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px; }
         .member-grid { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -29,19 +28,16 @@
         .member-name { font-weight: bold; font-size: 0.95rem; color: #fff; }
         .member-stats-preview { font-size: 0.75rem; color: #a0aec0; margin-top: 5px; }
 
-        /* Uprank AI */
         .ai-item { background: #101712; border: 1px solid #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
         .ai-header { font-weight: bold; color: #4ade80; margin-bottom: 5px; }
         .ai-reason { font-size: 0.85rem; color: #a0aec0; }
         
-        /* Modal / Popup */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: #1f2833; border: 2px solid #45f3ff; border-radius: 12px; padding: 30px; width: 500px; max-width: 90%; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2f3e46; padding-bottom: 10px; }
         .modal-header h3 { color: #66fcf1; font-size: 1.4rem; }
         .close-btn { color: #fff; cursor: pointer; font-size: 1.5rem; }
         
-        /* Counter Stepper */
         .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #0b0c10; padding: 10px 15px; border-radius: 6px; }
         .counter-controls { display: flex; align-items: center; gap: 15px; }
         .counter-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #45f3ff; color: #0b0c10; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
@@ -51,8 +47,7 @@
         button.action-btn { background: #45f3ff; color: #0b0c10; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
         button.delete-btn { background: #d9534f; color: #fff; }
         
-        /* Protokoll-Liste */
-        .log-item { background: #0b0c10; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #45f3ff; display: flex; justify-content: space-between; align-items: center; }
+        .log-item { background: #0b0c10; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #ff4444; display: flex; justify-content: space-between; align-items: center; }
         .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 10px; }
     </style>
 </head>
@@ -64,31 +59,27 @@
     </header>
 
     <div class="main-layout">
-        <!-- LINKER BEREICH: TEAM INTERAKTIV -->
         <div class="column-left">
             <div class="card">
                 <h2>Team-Übersicht (Für Steuerung anklicken)</h2>
                 <button class="action-btn" style="margin-bottom:20px; background:#66fcf1;" onclick="openAddMemberModal()">＋ Neues Teammitglied hinzufügen</button>
-                <div id="team-roster">
-                    <!-- Wird dynamisch geladen -->
-                </div>
+                <div id="team-roster"></div>
             </div>
             
             <div class="card">
-                <h2>Verlauf & Logs</h2>
+                <h2>Wichtige Team-Änderungen (Verlauf)</h2>
                 <div id="log-list">
-                    <p style="text-align:center; color:#a0aec0;">Keine Protokolleinträge vorhanden.</p>
+                    <p style="text-align:center; color:#a0aec0;">Keine wichtigen Änderungen protokolliert.</p>
                 </div>
             </div>
         </div>
 
-        <!-- RECHTER BEREICH: UPRANK AI -->
         <div class="column-right">
             <div class="card" style="border: 1px solid #4ade80; background: #0e1611;">
                 <h2 style="color: #4ade80; border-left-color: #4ade80;">🚀 Uprank AI Assistent</h2>
                 <div id="ai-suggestions">
                     <div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                        Vergib Punkte oder Freitext-Feedback, um automatische Uprank-Tipps zu erhalten.
+                        Vergib Punkte, um automatische Uprank-Tipps zu erhalten.
                     </div>
                 </div>
             </div>
@@ -96,7 +87,7 @@
     </div>
 </div>
 
-<!-- MODAL: BEARBEITEN / PLUS-MINUS -->
+<!-- MODAL: BEARBEITEN -->
 <div id="memberModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -104,7 +95,6 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
         </div>
         
-        <!-- Quick Counter (Plus/Minus) -->
         <div class="counter-group">
             <span>Tickets</span>
             <div class="counter-controls">
@@ -132,7 +122,6 @@
 
         <hr style="border-color:#2f3e46; margin: 15px 0;">
 
-        <!-- Rolle & Adminaktionen -->
         <label>Rolle ändern</label>
         <select id="edit-role" onchange="changeMemberRole()">
             <option value="Projektleitung">Projektleitung</option>
@@ -158,7 +147,7 @@
         </select>
 
         <label>Detaillierten Log/Kommentar schreiben</label>
-        <textarea id="modal-text-log" placeholder="Zusätzliche Infos wie Verwarnungen, Lob-Notizen..."></textarea>
+        <textarea id="modal-text-log" placeholder="Besondere Anmerkung eintragen..."></textarea>
         <button class="action-btn" onclick="saveTextLog()">Notiz hinzufügen</button>
         
         <button class="action-btn delete-btn" onclick="deleteMember()">Mitglied aus Team entfernen</button>
@@ -277,10 +266,7 @@
         stats[currentSelectedMember][statType] = Math.max(0, stats[currentSelectedMember][statType] + val);
         document.getElementById(`count-${statType}`).innerText = stats[currentSelectedMember][statType];
         
-        // Automatischen System-Log generieren
-        let logMsg = `${currentSelectedMember}: ${statType.toUpperCase()} ${val > 0 ? '+' + val : val}`;
-        addLogItem(logMsg);
-        
+        // Stille Änderung im Hintergrund (kein Verlauf-Eintrag mehr!)
         renderTeam();
         calculateAiUpranks();
     }
@@ -295,7 +281,8 @@
         teamData[newRole].push(currentSelectedMember);
         stats[currentSelectedMember].role = newRole;
         
-        addLogItem(`Rolle von ${currentSelectedMember} geändert von ${oldRole} zu ${newRole}`);
+        // WICHTIGE ÄNDERUNG: Wird im Verlauf angezeigt
+        addLogItem(`🔼 BEFÖRDERUNG / ROLLE: ${currentSelectedMember} zugewiesen zu ${newRole}`);
         renderTeam();
         calculateAiUpranks();
     }
@@ -303,8 +290,10 @@
     function saveTextLog() {
         let txt = document.getElementById('modal-text-log').value;
         if(!txt.trim()) return;
-        addLogItem(`${currentSelectedMember}: ${txt}`);
+        // WICHTIGE ÄNDERUNG: Textnotizen landen im Verlauf
+        addLogItem(`📝 NOTIZ für ${currentSelectedMember}: ${txt}`);
         document.getElementById('modal-text-log').value = "";
+        calculateAiUpranks();
     }
 
     function deleteMember() {
@@ -312,7 +301,9 @@
         let role = stats[currentSelectedMember].role;
         teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
         delete stats[currentSelectedMember];
-        addLogItem(`${currentSelectedMember} wurde aus dem Team entfernt.`);
+        
+        // WICHTIGE ÄNDERUNG: Kick landet im Verlauf
+        addLogItem(`❌ TEAM-KICK: ${currentSelectedMember} wurde aus dem Team entfernt.`);
         closeModal();
         renderTeam();
         calculateAiUpranks();
@@ -327,10 +318,12 @@
         teamData[role].push(name);
         stats[name] = { tickets: 0, supports: 0, feedbacks: 0, role: role };
         
-        addLogItem(`${name} als ${role} zum Team hinzugefügt.`);
+        // WICHTIGE ÄNDERUNG: Beitritt landet im Verlauf
+        addLogItem(`📥 NEUES MITGLIED: ${name} ist als ${role} beigetreten.`);
         closeAddModal();
         document.getElementById('add-name').value = "";
         renderTeam();
+        calculateAiUpranks();
     }
 
     function addLogItem(message) {
@@ -347,7 +340,7 @@
     function renderLogs() {
         let logDiv = document.getElementById('log-list');
         if(textLogs.length === 0) {
-            logDiv.innerHTML = '<p style="text-align:center; color:#a0aec0;">Keine Protokolleinträge vorhanden.</p>';
+            logDiv.innerHTML = '<p style="text-align:center; color:#a0aec0;">Keine wichtigen Änderungen protokolliert.</p>';
             return;
         }
         let html = "";
@@ -366,18 +359,17 @@
 
         for (let name in stats) {
             let user = stats[name];
-            // Uprank-Voraussetzung flexibel: Ab 5 bearbeiteten Sachen oder 2 positiven Feedbacks
-            if((user.tickets + user.supports >= 5 || user.feedbacks >= 2) && user.role.includes("Test")) {
+            if (user.tickets + user.supports >= 5 || user.feedbacks >= 3) {
                 suggestions.push({
                     name: name,
-                    reason: `Starke Werte (${user.tickets} Tickets, ${user.supports} Supports, ${user.feedbacks} Feedbacks). Prüfung auf Vollmitgliedschaft empfohlen!`
+                    reason: `Starke Werte (${user.tickets} Tickets, ${user.supports} Supports, ${user.feedbacks} Feedbacks).`
                 });
             }
         }
 
         if(suggestions.length === 0) {
             aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                Vergib Punkte oder Freitext-Feedback, um automatische Uprank-Tipps zu erhalten.
+                Vergib Punkte, um automatische Uprank-Tipps zu erhalten.
             </div>`;
         } else {
             let html = "";
@@ -391,7 +383,6 @@
         }
     }
 
-    // Start
     initStats();
     renderTeam();
 </script>
