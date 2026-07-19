@@ -39,9 +39,12 @@
         .close-btn { color: #fff; cursor: pointer; font-size: 1.5rem; }
         
         .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #0b0c10; padding: 10px 15px; border-radius: 6px; }
-        .counter-controls { display: flex; align-items: center; gap: 15px; }
+        .counter-controls { display: flex; align-items: center; gap: 10px; }
         .counter-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #45f3ff; color: #0b0c10; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
-        .counter-value { font-size: 1.1rem; font-weight: bold; color: #fff; width: 30px; text-align: center; }
+        
+        /* Modernisiertes Eingabefeld im Popup */
+        input.counter-input { width: 60px; padding: 5px; background: #1f2833; border: 1px solid #45f3ff; border-radius: 4px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; margin-bottom: 0; }
+        input.counter-input::-webkit-inner-spin-button, input.counter-input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
         input, select, textarea { width: 100%; padding: 10px; background: #0b0c10; border: 1px solid #2f3e46; border-radius: 6px; color: #fff; margin-bottom: 15px; }
         button.action-btn { background: #45f3ff; color: #0b0c10; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
@@ -99,7 +102,7 @@
             <span>Tickets</span>
             <div class="counter-controls">
                 <button class="counter-btn" onclick="adjustStat('tickets', -1)">-</button>
-                <span class="counter-value" id="count-tickets">0</span>
+                <input type="number" class="counter-input" id="count-tickets" value="0" min="0" oninput="updateStatFromInput('tickets')">
                 <button class="counter-btn" onclick="adjustStat('tickets', 1)">+</button>
             </div>
         </div>
@@ -107,7 +110,7 @@
             <span>Supports</span>
             <div class="counter-controls">
                 <button class="counter-btn" onclick="adjustStat('supports', -1)">-</button>
-                <span class="counter-value" id="count-supports">0</span>
+                <input type="number" class="counter-input" id="count-supports" value="0" min="0" oninput="updateStatFromInput('supports')">
                 <button class="counter-btn" onclick="adjustStat('supports', 1)">+</button>
             </div>
         </div>
@@ -115,7 +118,7 @@
             <span>Feedbacks</span>
             <div class="counter-controls">
                 <button class="counter-btn" onclick="adjustStat('feedbacks', -1)">-</button>
-                <span class="counter-value" id="count-feedbacks">0</span>
+                <input type="number" class="counter-input" id="count-feedbacks" value="0" min="0" oninput="updateStatFromInput('feedbacks')">
                 <button class="counter-btn" onclick="adjustStat('feedbacks', 1)">+</button>
             </div>
         </div>
@@ -249,9 +252,9 @@
     function openModal(name) {
         currentSelectedMember = name;
         document.getElementById('modalMemberName').innerText = name;
-        document.getElementById('count-tickets').innerText = stats[name].tickets;
-        document.getElementById('count-supports').innerText = stats[name].supports;
-        document.getElementById('count-feedbacks').innerText = stats[name].feedbacks;
+        document.getElementById('count-tickets').value = stats[name].tickets;
+        document.getElementById('count-supports').value = stats[name].supports;
+        document.getElementById('count-feedbacks').value = stats[name].feedbacks;
         document.getElementById('edit-role').value = stats[name].role;
         document.getElementById('modal-text-log').value = "";
         document.getElementById('memberModal').style.display = 'flex';
@@ -264,9 +267,19 @@
     function adjustStat(statType, val) {
         if (!currentSelectedMember) return;
         stats[currentSelectedMember][statType] = Math.max(0, stats[currentSelectedMember][statType] + val);
-        document.getElementById(`count-${statType}`).innerText = stats[currentSelectedMember][statType];
+        document.getElementById(`count-${statType}`).value = stats[currentSelectedMember][statType];
         
-        // Stille Änderung im Hintergrund (kein Verlauf-Eintrag mehr!)
+        renderTeam();
+        calculateAiUpranks();
+    }
+
+    // Funktion für die direkte Zahleneingabe über die Tastatur
+    function updateStatFromInput(statType) {
+        if (!currentSelectedMember) return;
+        let inputVal = parseInt(document.getElementById(`count-${statType}`).value);
+        if (isNaN(inputVal) || inputVal < 0) inputVal = 0;
+        
+        stats[currentSelectedMember][statType] = inputVal;
         renderTeam();
         calculateAiUpranks();
     }
@@ -281,7 +294,6 @@
         teamData[newRole].push(currentSelectedMember);
         stats[currentSelectedMember].role = newRole;
         
-        // WICHTIGE ÄNDERUNG: Wird im Verlauf angezeigt
         addLogItem(`🔼 BEFÖRDERUNG / ROLLE: ${currentSelectedMember} zugewiesen zu ${newRole}`);
         renderTeam();
         calculateAiUpranks();
@@ -290,7 +302,6 @@
     function saveTextLog() {
         let txt = document.getElementById('modal-text-log').value;
         if(!txt.trim()) return;
-        // WICHTIGE ÄNDERUNG: Textnotizen landen im Verlauf
         addLogItem(`📝 NOTIZ für ${currentSelectedMember}: ${txt}`);
         document.getElementById('modal-text-log').value = "";
         calculateAiUpranks();
@@ -302,7 +313,6 @@
         teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
         delete stats[currentSelectedMember];
         
-        // WICHTIGE ÄNDERUNG: Kick landet im Verlauf
         addLogItem(`❌ TEAM-KICK: ${currentSelectedMember} wurde aus dem Team entfernt.`);
         closeModal();
         renderTeam();
@@ -318,7 +328,6 @@
         teamData[role].push(name);
         stats[name] = { tickets: 0, supports: 0, feedbacks: 0, role: role };
         
-        // WICHTIGE ÄNDERUNG: Beitritt landet im Verlauf
         addLogItem(`📥 NEUES MITGLIED: ${name} ist als ${role} beigetreten.`);
         closeAddModal();
         document.getElementById('add-name').value = "";
