@@ -3,180 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Support Tickets</title>
+    <title>FiveM Management Dashboard & Uprank AI</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0f0f12; color: #e2e8f0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .wrapper { width: 100%; max-width: 800px; background: #17171c; padding: 30px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); border: 1px solid #ff4444; margin-bottom: 30px; }
-        h1, h2 { text-align: center; color: #ff4444; margin-bottom: 10px; text-transform: uppercase; }
-        p.subtitle { text-align: center; color: #a0aec0; font-size: 0.9rem; margin-bottom: 25px; }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 600; font-size: 0.9rem; }
-        input, select, textarea { width: 100%; padding: 12px; background-color: #202027; border: 1px solid #3f3f46; border-radius: 6px; color: #fff; font-size: 1rem; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #ff4444; }
-        textarea { resize: vertical; height: 80px; }
-        button { width: 100%; padding: 14px; background-color: #ff4444; color: #fff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        button:hover { background-color: #ff2222; }
-        .status-msg { margin-top: 15px; text-align: center; font-weight: bold; display: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: #0a0a0c; color: #e2e8f0; padding: 20px; }
         
-        /* Tabellen Styling */
-        .table-wrapper { width: 100%; max-width: 1000px; background: #17171c; padding: 20px; border-radius: 12px; border: 1px solid #3f3f46; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 12px; border-bottom: 1px solid #232329; font-size: 0.95rem; }
-        th { background-color: #202027; color: #ff4444; text-transform: uppercase; font-size: 0.85rem; }
-        tr:hover { background-color: #1f1f26; }
+        .container { max-width: 1400px; margin: 0 auto; display: block; }
+        
+        header { border-bottom: 2px solid #ff4444; padding-bottom: 20px; margin-bottom: 35px; text-align: center; }
+        header h1 { color: #ff4444; text-transform: uppercase; font-size: 2.2rem; letter-spacing: 2px; }
+        header p { color: #a0aec0; margin-top: 5px; font-size: 1rem; }
+
+        .main-layout { width: 100%; margin-bottom: 30px; }
+        .column-left { width: 68%; float: left; }
+        .column-right { width: 30%; float: right; }
+        .clearfix { clear: both; }
+
+        .card { background: #13131a; border-radius: 12px; border: 1px solid #23232f; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .card h2 { color: #ff4444; text-transform: uppercase; font-size: 1.25rem; margin-bottom: 20px; border-left: 4px solid #ff4444; padding-left: 10px; }
+
+        .form-row { width: 100%; margin-bottom: 15px; }
+        .form-col-50 { width: 49%; display: inline-block; vertical-align: top; }
+        .form-col-50:last-child { margin-left: 2%; }
+        label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+        input, select, textarea { width: 100%; padding: 12px; background-color: #1a1a24; border: 1px solid #2d2d3d; border-radius: 6px; color: #fff; font-size: 0.95rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #ff4444; }
+        
+        .btn-group { margin-top: 15px; }
+        button { background-color: #ff4444; color: #fff; border: none; border-radius: 6px; padding: 12px 24px; font-size: 0.95rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        button:hover { background-color: #e03333; }
+        
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; background: #2a2a35; color: #cbd5e1; }
+        .badge-success { background: #1b4332; color: #52b788; }
+        .badge-danger { background: #4c1d1d; color: #f87171; }
+        .badge-star { background: #5c4d1d; color: #fbbf24; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #1f1f2e; text-align: left; font-size: 0.9rem; }
+        th { background: #1a1a24; color: #a0aec0; text-transform: uppercase; font-size: 0.8rem; font-weight: bold; }
+        tr:hover { background: #181822; }
+
+        .role-section { border-bottom: 1px solid #1f1f2e; padding: 12px 0; }
+        .role-name { font-weight: bold; color: #ff4444; font-size: 0.9rem; text-transform: uppercase; }
+        .role-members { color: #cbd5e1; font-size: 0.85rem; margin-top: 4px; line-height: 1.4; }
+
+        .ai-item { background: #181c24; border: 1px solid #2b384e; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+        .ai-header { font-weight: bold; color: #4ade80; font-size: 1rem; margin-bottom: 5px; }
+        .ai-reason { font-size: 0.85rem; color: #a0aec0; }
+
+        .tab-bar { border-bottom: 1px solid #23232f; margin-bottom: 20px; }
+        .tab { display: inline-block; padding: 10px 20px; cursor: pointer; color: #a0aec0; font-weight: bold; border-bottom: 2px solid transparent; margin-right: 10px; }
+        .tab.active { color: #ff4444; border-bottom: 2px solid #ff4444; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <h1>Support Tickets</h1>
-    <p class="subtitle">Trage hier bearbeitete Fälle und Personen für die Teamleitung ein.</p>
-    
-    <form id="supportForm">
-        <div class="form-group">
-            <label for="teamler">Dein Name / ID (Supporter)</label>
-            <input type="text" id="teamler" placeholder="z.B. Supporter Max" required>
+<div class="container">
+    <header>
+        <h1>FiveM Management System & Uprank AI</h1>
+        <p>Bro-Edition • Verwalte dein Team, logge Feedbacks & erkenne vollautomatisch wer Beförderungen verdient hat</p>
+    </header>
+
+    <div class="main-layout">
+        <!-- LINKER BEREICH -->
+        <div class="column-left">
+            <div class="card">
+                <div class="tab-bar">
+                    <span class="tab active" onclick="switchForm('support')">⚡ Support / Ticket loggen</span>
+                    <span class="tab" onclick="switchForm('feedback')">⭐ Team-Feedback erfassen</span>
+                </div>
+
+                <!-- FORM 1: TICKET LOGGING -->
+                <div id="form-support">
+                    <div class="form-row">
+                        <div class="form-col-50">
+                            <label for="sup-member">Teammitglied (Wer hat bearbeitet?)</label>
+                            <select id="sup-member">
+                                <option disabled selected>Mitglied auswählen...</option>
+                                <optgroup label="Test Supporter">
+                                    <option>@ginzo_kass16</option><option>@Munzich</option><option>@Flakes</option>
+                                    <option>@Gabriel_Patronss</option><option>@MC | IDropMyTable</option><option>@MC Jamal</option>
+                                    <option>@MC Tim Dinaro</option><option>@MC| 368kk</option><option>@MC | Romero</option>
+                                    <option>@MC syzulex</option><option>@MC Louis</option><option>@MC Nick.exe</option>
+                                </optgroup>
+                                <optgroup label="Supporter">
+                                    <option>@Kingston G2</option><option>@1511677208563945603</option>
+                                </optgroup>
+                                <optgroup label="Sr. Supporter">
+                                    <option>@MC | Kellox</option><option>@JohanH</option>
+                                </optgroup>
+                                <optgroup label="Moderatoren">
+                                    <option>@MC | HIRA</option><option>@MC★RYZE★</option><option>@MC | zonex</option><option>@Andre</option><option>@MCILiam</option>
+                                </optgroup>
+                                <optgroup label="Administratoren">
+                                    <option>@MC I Eliasdwd</option><option>@MC | Patrick 00</option><option>@Paul</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="form-col-50">
+                            <label for="sup-player">Spieler Name / ID (Wer brauchte Hilfe?)</label>
+                            <input type="text" id="sup-player" placeholder="z.B. Tom_Block [ID 187]">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-col-50">
+                            <label for="sup-type">Support-Kategorie</label>
+                            <select id="sup-type">
+                                <option>Spieler-Support (Ticket)</option>
+                                <option>Fraktions-Angelegenheit</option>
+                                <option>IC-Hilfe / Erstattung</option>
+                                <option>Regelverstoß / Sanktion</option>
+                            </select>
+                        </div>
+                        <div class="form-col-50">
+                            <label for="sup-status">Ergebnis / Status</label>
+                            <select id="sup-status">
+                                <option value="Erfolgreich">Erfolgreich geklärt</option>
+                                <option value="Verwarnung">Mündliche/Schriftliche Verwarnung</option>
+                                <option value="Bann">Ausschluss / Bann erteilt</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <label for="sup-note">Notizen / Kurze Beschreibung</label>
+                        <textarea id="sup-note" placeholder="Was wurde im Support genau gemacht?"></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button onclick="saveLog('support')">Fall eintragen</button>
+                    </div>
+                </div>
+
+                <!-- FORM 2: FEEDBACK ERFASSEN -->
+                <div id="form-feedback" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-col-50">
+                            <label for="feed-member">Teammitglied bewerten</label>
+                            <select id="feed-member">
+                                <option disabled selected>Mitglied auswählen...</option>
+                                <option>@ginzo_kass16</option><option>@Munzich</option><option>@Flakes</option>
+                                <option>@Gabriel_Patronss</option><option>@MC | IDropMyTable</option><option>@MC Jamal</option>
+                                <option>@MC Tim Dinaro</option><option>@MC | Kellox</option><option>@JohanH</option>
+                                <option>@Kingston G2</option><option>@MC | HIRA</option><option>@MC★RYZE★</option><option>@MC | zonex</option>
+                                <option>@Andre</option><option>@MCILiam</option><option>@MC Louis</option><option>@MC Nick.exe</option>
+                            </select>
+                        </div>
+                        <div class="form-col-50">
+                            <label for="feed-rating">Bewertung / Feedback-Typ</label>
+                            <select id="feed-rating">
+                                <option value="positiv">Sehr Positiv (+ Lob erhalten)</option>
+                                <option value="neutral">Neutral / Standardleistung</option>
+                                <option value="negativ">Negativ (- Beschwerde / Fehlverhalten)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="feed-reason">Begründung für das Feedback</label>
+                        <textarea id="feed-reason" placeholder="z.B. Fällt positiv durch extrem schnelle Ticketbearbeitung auf."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button onclick="saveLog('feedback')">Feedback speichern</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABELLE -->
+            <div class="card">
+                <h2>Aktivitäts- & Fallprotokoll</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Zeit</th>
+                            <th>Teamler</th>
+                            <th>Typ / Details</th>
+                            <th>Zielperson / Info</th>
+                            <th>Status / Bewertung</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-table-body">
+                        <tr><td colspan="5" style="text-align:center; color:#a0aec0;">Noch keine Live-Einträge vorgenommen.</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="spieler">Name / ID der bearbeiteten Person (Wer brauchte Hilfe?)</label>
-            <input type="text" id="spieler" placeholder="z.B. Kevin_Alvarez [ID 45]" required>
+        <!-- RECHTER BEREICH -->
+        <div class="column-right">
+            <div class="card" style="border: 1px solid #4ade80; background: #0e1611;">
+                <h2 style="color: #4ade80; border-left-color: #4ade80;">🚀 Uprank AI Assistent</h2>
+                <p style="font-size:0.8rem; color:#a0aec0; margin-bottom:15px;">Analysiert eingegebene Daten & schlägt Beförderungen vor:</p>
+                <div id="ai-suggestions">
+                    <div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
+                        Sammle Daten. Logge Supports und positives Feedback, um Empfehlungen freizuschalten!
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>👥 Team-Rollenverteilung</h2>
+                <div style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+                    <div class="role-section"><div class="role-name">Projektleitung</div><div class="role-members">@MC|Lyrox™</div></div>
+                    <div class="role-section"><div class="role-name">Stv. Projektleitung</div><div class="role-members">@Toastbrot</div></div>
+                    <div class="role-section"><div class="role-name">Teamleitung</div><div class="role-members">@MC|Paul, @ZmtxTV, @MC | CityNeko</div></div>
+                    <div class="role-section"><div class="role-name">Fraktionsverwaltungleitung</div><div class="role-members">@knobi, @MC| Sidney</div></div>
+                    <div class="role-section"><div class="role-name">Fraktionsverwaltung</div><div class="role-members">@MC Jaden, @Itz John</div></div>
+                    <div class="role-section"><div class="role-name">Dev-Team</div><div class="role-members">Knoppers.exe (Head), Exy.lua (Dev), @OnlyError (Jr.)</div></div>
+                    <div class="role-section"><div class="role-name">Head Administrator</div><div class="role-members">@Paul</div></div>
+                    <div class="role-section"><div class="role-name">Sr. Administrator</div><div class="role-members">@MC | Patrick 00</div></div>
+                    <div class="role-section"><div class="role-name">Test-Administrator</div><div class="role-members">@MC I Eliasdwd</div></div>
+                    <div class="role-section"><div class="role-name">Head Moderator</div><div class="role-members">@MCILiam</div></div>
+                    <div class="role-section"><div class="role-name">Moderator</div><div class="role-members">@MC | HIRA</div></div>
+                    <div class="role-section"><div class="role-name">Test - Moderator</div><div class="role-members">@MC★RYZE★, @MC | zonex, @Andre</div></div>
+                    <div class="role-section"><div class="role-name">Sr. Supporter</div><div class="role-members">@MC | Kellox, @JohanH</div></div>
+                    <div class="role-section"><div class="role-name">Supporter</div><div class="role-members">@Kingston G2, @1511677208563945603</div></div>
+                    <div class="role-section" style="border:none;"><div class="role-name">Test Supporter</div><div class="role-members" style="font-size:0.8rem;">@ginzo_kass16, @Munzich, @Flakes, @Gabriel_Patronss, @MC | IDropMyTable, @MC Jamal, @MC Tim Dinaro, @MC| 368kk, @MC | Romero, @MC syzulex, @MC Louis, @MC Nick.exe</div></div>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="art">Art des Vergehens / Supports</label>
-            <select id="art" required>
-                <option value="" disabled selected>Bitte wählen...</option>
-                <option value="RDM / VDM">RDM / VDM</option>
-                <option value="Fail-RP / Power-RP">Fail-RP / Power-RP</option>
-                <option value="Combat Logging">Combat Logging</option>
-                <option value="Erstattung / IC-Hilfe">Erstattung / IC-Hilfe</option>
-                <option value="Sonstiges">Sonstiges</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="beschreibung">Kurze Beschreibung (Was wurde gemacht?)</label>
-            <textarea id="beschreibung" placeholder="Spieler hat die Regeln missachtet, Situation im Support geklärt..." required></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="strafe">Sanktion / Ergebnis</label>
-            <select id="strafe" required>
-                <option value="" disabled selected>Bitte wählen...</option>
-                <option value="Mündliche Verwarnung">Mündliche Verwarnung</option>
-                <option value="Schriftliche Verwarnung">Schriftliche Verwarnung</option>
-                <option value="Temporärer Ban">Temporärer Ban</option>
-                <option value="Permanenter Ban">Permanenter Ban</option>
-                <option value="Erfolgreich geklärt (Keine Strafe)">Erfolgreich geklärt</option>
-            </select>
-        </div>
-
-        <button type="submit" id="submitBtn">Eintrag absenden</button>
-    </form>
-    <div id="statusMsg" class="status-msg"></div>
-</div>
-
-<div class="table-wrapper">
-    <h2>Abgeschlossene Einträge (Live)</h2>
-    <p class="subtitle" style="margin-bottom: 15px;">Hier sieht die Teamleitung alle erstellten Einträge für Upranks</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Datum</th>
-                <th>Supporter</th>
-                <th>Bearbeitete Person</th>
-                <th>Art</th>
-                <th>Beschreibung</th>
-                <th>Sanktion</th>
-            </tr>
-        </thead>
-        <tbody id="logTableBody">
-            <tr>
-                <td colspan="6" style="text-align: center; color: #a0aec0;">Lade Einträge...</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="clearfix"></div>
+    </div>
 </div>
 
 <script>
-    // GOOGLE WEB-APP URL (Deine persönliche API)
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxezzhZVLTZCOM6kBjLe0u6qM63T_KXAB160rZ-tBdKKGQ4Rp81AfDUoAkLPKYtzCgyqg/exec";
+    let logs = [];
+    let stats = {};
 
-    // Einträge beim Laden der Seite anzeigen
-    function loadLogs() {
-        fetch(GOOGLE_SCRIPT_URL)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById('logTableBody');
-            tbody.innerHTML = "";
-            if(!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Noch keine Einträge vorhanden.</td></tr>`;
-                return;
-            }
-            // Zeige die neuesten Einträge oben an
-            data.reverse().forEach(row => {
-                const date = new Date(row[0]).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' });
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${date}</td>
-                        <td style="font-weight: bold; color: #ff4444;">${row[1]}</td>
-                        <td>${row[2]}</td>
-                        <td><span style="background: #202027; padding: 4px 8px; border-radius: 4px;">${row[3]}</span></td>
-                        <td>${row[4]}</td>
-                        <td style="color: #4ade80;">${row[5]}</td>
-                    </tr>
-                `;
-            });
-        }).catch(() => {
-            document.getElementById('logTableBody').innerHTML = `<tr><td colspan="6" style="text-align: center; color: #f87171;">Fehler beim Laden der Einträge.</td></tr>`;
-        });
+    function switchForm(type) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        if(type === 'support') {
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.getElementById('form-support').style.display = 'block';
+            document.getElementById('form-feedback').style.display = 'none';
+        } else {
+            document.querySelectorAll('.tab')[1].classList.add('active');
+            document.getElementById('form-support').style.display = 'none';
+            document.getElementById('form-feedback').style.display = 'block';
+        }
     }
 
-    // Formular absenden
-    document.getElementById('supportForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        const statusMsg = document.getElementById('statusMsg');
+    function saveLog(type) {
+        let now = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+        let entry = { time: now, type: type };
+
+        if(type === 'support') {
+            let member = document.getElementById('sup-member').value;
+            let player = document.getElementById('sup-player').value || "Unbekannt";
+            let cat = document.getElementById('sup-type').value;
+            let status = document.getElementById('sup-status').value;
+            
+            if(!member || member.includes("auswählen")) return alert("Wähle ein Teammitglied aus!");
+            
+            entry.member = member;
+            entry.detail = cat;
+            entry.target = player;
+            entry.status = status;
+            
+            if(!stats[member]) stats[member] = { supports: 0, positiveFeed: 0, negativeFeed: 0 };
+            stats[member].supports += 1;
+            
+        } else {
+            let member = document.getElementById('feed-member').value;
+            let rating = document.getElementById('feed-rating').value;
+            let reason = document.getElementById('feed-reason').value || "Keine Begründung";
+            
+            if(!member || member.includes("auswählen")) return alert("Wähle ein Teammitglied aus!");
+            
+            entry.member = member;
+            entry.detail = "Feedback Erfassung";
+            entry.target = reason;
+            entry.status = rating;
+            
+            if(!stats[member]) stats[member] = { supports: 0, positiveFeed: 0, negativeFeed: 0 };
+            if(rating === 'positiv') stats[member].positiveFeed += 1;
+            if(rating === 'negativ') stats[member].negativeFeed += 1;
+        }
+
+        logs.unshift(entry);
+        renderLogs();
+        calculateAiUpranks();
         
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Wird gespeichert...";
+        document.getElementById('sup-player').value = '';
+        document.getElementById('sup-note').value = '';
+        document.getElementById('feed-reason').value = '';
+    }
 
-        const payload = {
-            supporter: document.getElementById('teamler').value,
-            spieler: document.getElementById('spieler').value,
-            art: document.getElementById('art').value,
-            beschreibung: document.getElementById('beschreibung').value,
-            sanktion: document.getElementById('strafe').value
-        };
-
-        fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            statusMsg.style.color = "#4ade80";
-            statusMsg.innerText = "✅ Eintrag erfolgreich auf der Webseite gespeichert!";
-            statusMsg.style.display = "block";
-            document.getElementById('supportForm').reset();
-            setTimeout(loadLogs, 1500); // Tabelle nach 1.5 Sek neu laden
-        })
-        .catch(() => {
-            statusMsg.style.color = "#f87171";
-            statusMsg.innerText = "❌ Fehler beim Speichern.";
-            statusMsg.style.display = "block";
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Eintrag absenden";
+    function renderLogs() {
+        let html = "";
+        logs.forEach(l => {
+            let badgeClass = "badge";
+            if(l.status === 'Erfolgreich' || l.status === 'positiv') badgeClass += " badge-success";
+            if(l.status === 'Bann' || l.status === 'negativ') badgeClass += " badge-danger";
+            
+            html += `<tr>
+                <td>${l.time}</td>
+                <td style="font-weight:bold; color:#ff4444;">${l.member}</td>
+                <td>${l.detail}</td>
+                <td style="color:#a0aec0;">${l.target}</td>
+                <td><span class="${badgeClass}">${l.status}</span></td>
+            </tr>`;
         });
-    });
+        document.getElementById('log-table-body').innerHTML = html;
+    }
 
-    // Initiales Laden beim Aufruf der Seite
-    loadLogs();
+    function calculateAiUpranks() {
+        let aiDiv = document.getElementById('ai-suggestions');
+        let suggestions = [];
+
+        for (let member in stats) {
+            let data = stats[member];
+            if(data.supports >= 3 && data.negativeFeed === 0) {
+                suggestions.push({
+                    name: member,
+                    reason: `Hohe Support-Aktivität (${data.supports} Tickets bearbeitet) ohne negative Vorfälle. Beförderung prüfen!`
+                });
+            }
+            if(data.positiveFeed >= 1) {
+                suggestions.push({
+                    name: member,
+                    reason: `Hat herausragend positives Feedback/Lob erhalten. Reif für das nächste Level.`
+                });
+            }
+        }
+
+        if(suggestions.length === 0) {
+            aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
+                Sammle weiter Daten. Uprank AI wertet Leistungswerte im Hintergrund aus...
+            </div>`;
+        } else {
+            let html = "";
+            suggestions.forEach(s => {
+                html += `<div class="ai-item">
+                    <div class="ai-header">🚀 ${s.name} <span class="badge badge-star">Uprank Tipp</span></div>
+                    <div class="ai-reason">${s.reason}</div>
+                </div>`;
+            });
+            aiDiv.innerHTML = html;
+        }
+    }
 </script>
 
 </body>
