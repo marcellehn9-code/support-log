@@ -105,6 +105,41 @@
     </div>
 </div>
 
+<!-- POPUP MODAL -->
+<div id="member-modal" class="modal">
+    <div class="modal-content">
+        <h2 id="modal-title" style="color: var(--neon); margin-bottom: 15px;">Mitglied bearbeiten</h2>
+        <input type="hidden" id="modal-member-id">
+        
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 0.8rem; color: #a0aec0;">Name:</label>
+            <input type="text" id="modal-name" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 0.8rem; color: #a0aec0;">Rolle:</label>
+            <select id="modal-role" style="width: 100%; padding: 8px; background: var(--bg); border: 1px solid var(--border); color: #fff; border-radius: 4px;">
+                <option value="Projektleitung">Projektleitung</option>
+                <option value="Manager">Manager</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Moderator">Moderator</option>
+                <option value="Supporter">Supporter</option>
+            </select>
+        </div>
+
+        <div class="counter-group"><span>Tickets:</span><input type="number" id="modal-tickets" class="counter-input" value="0"></div>
+        <div class="counter-group"><span>Supports:</span><input type="number" id="modal-supports" class="counter-input" value="0"></div>
+        <div class="counter-group"><span>Feedbacks:</span><input type="number" id="modal-feedbacks" class="counter-input" value="0"></div>
+        <div class="counter-group"><span>Einreisen:</span><input type="number" id="modal-einreisen" class="counter-input" value="0"></div>
+        <div class="counter-group"><span>Ausreise:</span><input type="number" id="modal-ausreisen" class="counter-input" value="0"></div>
+        <div class="counter-group"><span>Banned:</span><input type="number" id="modal-banne" class="counter-input" value="0"></div>
+
+        <button class="action-btn" onclick="saveMemberData()">Speichern</button>
+        <button class="action-btn" style="background: #d9534f; color: #fff;" onclick="deleteMemberData()">Löschen</button>
+        <button class="action-btn" style="background: #4a5568; color: #fff;" onclick="closeModal()">Abbrechen</button>
+    </div>
+</div>
+
 <script>
     // Verschlüsselte API Daten gegen GitHub-Scanner
     const _uArr = [104,116,116,112,115,58,47,47,97,112,105,46,106,115,111,110,98,105,110,46,105,111,47,118,51,47,96,47,54,54,57,97,98,51,100,55,97,99,100,51,99,98,51,52,97,56,54,57,48,51,102,53];
@@ -112,12 +147,13 @@
     const BIN_URL = _uArr.map(c => String.fromCharCode(c)).join('').replace('`', 'b');
     const MASTER_KEY = _kArr.map(c => String.fromCharCode(c)).join('');
     
-    // Elemente
+    let teamMembers = [];
     const docField = document.getElementById('live-google-doc');
 
-    // Beim Laden alten Text aus dem Speicher holen
     window.addEventListener('DOMContentLoaded', () => {
         document.body.style.display = 'block';
+        
+        // TB-Feld aus localStorage wiederherstellen
         const savedNote = localStorage.getItem('malora_tb_notes');
         if (savedNote !== null && docField) {
             docField.value = savedNote;
@@ -146,6 +182,7 @@
     function checkLogin() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-interface').style.display = 'block';
+        renderRoster();
     }
 
     function switchPage(pageId) {
@@ -153,6 +190,111 @@
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active-tab'));
         document.getElementById('page-' + pageId).classList.add('active-page');
         event.currentTarget.classList.add('active-tab');
+    }
+
+    function renderRoster() {
+        const rosterContainer = document.getElementById('team-roster');
+        if (!rosterContainer) return;
+        
+        const roles = ["Projektleitung", "Manager", "Administrator", "Moderator", "Supporter"];
+        let html = "";
+
+        roles.forEach(role => {
+            const membersInRole = teamMembers.filter(m => m.role === role);
+            html += `<div class="role-section">
+                <div class="role-title">${role} (${membersInRole.length})</div>
+                <div class="member-grid">`;
+            
+            membersInRole.forEach(m => {
+                html += `<div class="member-card" onclick="openEditModal('${m.id}')">
+                    <div class="member-name">${m.name}</div>
+                    <div class="member-stats-preview">
+                        T: ${m.tickets || 0} | S: ${m.supports || 0} | F: ${m.feedbacks || 0}<br>
+                        E: ${m.einreisen || 0} | A: ${m.ausreisen || 0} | B: ${m.banne || 0}
+                    </div>
+                </div>`;
+            });
+
+            html += `</div></div>`;
+        });
+
+        rosterContainer.innerHTML = html;
+    }
+
+    function openAddMemberModal() {
+        document.getElementById('modal-title').innerText = "Mitglied hinzufügen";
+        document.getElementById('modal-member-id').value = "";
+        document.getElementById('modal-name').value = "";
+        document.getElementById('modal-role').value = "Supporter";
+        document.getElementById('modal-tickets').value = 0;
+        document.getElementById('modal-supports').value = 0;
+        document.getElementById('modal-feedbacks').value = 0;
+        document.getElementById('modal-einreisen').value = 0;
+        document.getElementById('modal-ausreisen').value = 0;
+        document.getElementById('modal-banne').value = 0;
+        document.getElementById('member-modal').style.display = 'flex';
+    }
+
+    function openEditModal(id) {
+        const m = teamMembers.find(x => x.id === id);
+        if (!m) return;
+
+        document.getElementById('modal-title').innerText = "Mitglied bearbeiten";
+        document.getElementById('modal-member-id').value = m.id;
+        document.getElementById('modal-name').value = m.name;
+        document.getElementById('modal-role').value = m.role;
+        document.getElementById('modal-tickets').value = m.tickets || 0;
+        document.getElementById('modal-supports').value = m.supports || 0;
+        document.getElementById('modal-feedbacks').value = m.feedbacks || 0;
+        document.getElementById('modal-einreisen').value = m.einreisen || 0;
+        document.getElementById('modal-ausreisen').value = m.ausreisen || 0;
+        document.getElementById('modal-banne').value = m.banne || 0;
+        document.getElementById('member-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('member-modal').style.display = 'none';
+    }
+
+    function saveMemberData() {
+        const id = document.getElementById('modal-member-id').value;
+        const name = document.getElementById('modal-name').value.trim();
+        const role = document.getElementById('modal-role').value;
+
+        if (!name) return alert("Bitte Name eingeben!");
+
+        const memberData = {
+            id: id || 'm_' + Date.now(),
+            name: name,
+            role: role,
+            tickets: parseInt(document.getElementById('modal-tickets').value) || 0,
+            supports: parseInt(document.getElementById('modal-supports').value) || 0,
+            feedbacks: parseInt(document.getElementById('modal-feedbacks').value) || 0,
+            einreisen: parseInt(document.getElementById('modal-einreisen').value) || 0,
+            ausreisen: parseInt(document.getElementById('modal-ausreisen').value) || 0,
+            banne: parseInt(document.getElementById('modal-banne').value) || 0
+        };
+
+        if (id) {
+            const index = teamMembers.findIndex(x => x.id === id);
+            if (index !== -1) teamMembers[index] = memberData;
+        } else {
+            teamMembers.push(memberData);
+        }
+
+        renderRoster();
+        closeModal();
+    }
+
+    function deleteMemberData() {
+        const id = document.getElementById('modal-member-id').value;
+        if (!id) return closeModal();
+
+        if (confirm("Wirklich löschen?")) {
+            teamMembers = teamMembers.filter(x => x.id !== id);
+            renderRoster();
+            closeModal();
+        }
     }
 </script>
 </body>
