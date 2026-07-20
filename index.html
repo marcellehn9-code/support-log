@@ -181,10 +181,10 @@
                 <div class="archive-box"><h3 style="color: #38bdf8;">🛠️ Support-Log</h3><div id="log-supports"></div></div>
                 <div class="archive-box"><h3 style="color: #a78bfa;">⭐ Feedback-Log</h3><div id="log-feedbacks"></div></div>
                 <div class="archive-box"><h3 style="color: #34d399;">🛃 Einreisen-Log</h3><div id="log-einreisen"></div></div>
-                <div class="archive-box"><h3 style="color: #fb923c;">🛬 Ausreisen-Log</h3><div id="log-ausreisen"></div></div>
-                <div class="archive-box"><h3 style="color: #f87171;">🚫 Banne-Log</h3><div id="log-banne"></div></div>
+                <div class="archive-box"><h3 style="color: #fb923c;">🛬 Ausreise-Log</h3><div id="log-ausreisen"></div></div>
+                <div class="archive-box"><h3 style="color: #f87171;">🚫 Banned-Log</h3><div id="log-banne"></div></div>
                 <div class="archive-box"><h3 style="color: #fbbf24;">🔼 Beförderungen (Uprank)</h3><div id="log-upranks"></div></div>
-                <div class="archive-box"><h3 style="color: #ef4444;">❌ Kicks & Austritte</h3><div id="log-kicks"></div></div>
+                <div class="archive-box"><h3 style="color: #ef4444;">❌ Kicks & Ausreise</h3><div id="log-kicks"></div></div>
             </div>
         </div>
     </div>
@@ -198,8 +198,8 @@
         <div class="counter-group"><span>Supports</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('supports', -1)">-</button><input type="number" class="counter-input" id="count-supports" value="0" min="0" oninput="updateStatFromInput('supports')"><button class="counter-btn" onclick="adjustStat('supports', 1)">+</button></div></div>
         <div class="counter-group"><span>Feedbacks</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('feedbacks', -1)">-</button><input type="number" class="counter-input" id="count-feedbacks" value="0" min="0" oninput="updateStatFromInput('feedbacks')"><button class="counter-btn" onclick="adjustStat('feedbacks', 1)">+</button></div></div>
         <div class="counter-group"><span>Einreisen</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('einreisen', -1)">-</button><input type="number" class="counter-input" id="count-einreisen" value="0" min="0" oninput="updateStatFromInput('einreisen')"><button class="counter-btn" onclick="adjustStat('einreisen', 1)">+</button></div></div>
-        <div class="counter-group"><span>Ausreisen</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('ausreisen', -1)">-</button><input type="number" class="counter-input" id="count-ausreisen" value="0" min="0" oninput="updateStatFromInput('ausreisen')"><button class="counter-btn" onclick="adjustStat('ausreisen', 1)">+</button></div></div>
-        <div class="counter-group"><span>Banne</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('banne', -1)">-</button><input type="number" class="counter-input" id="count-banne" value="0" min="0" oninput="updateStatFromInput('banne')"><button class="counter-btn" onclick="adjustStat('banne', 1)">+</button></div></div>
+        <div class="counter-group"><span>Ausreise</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('ausreisen', -1)">-</button><input type="number" class="counter-input" id="count-ausreisen" value="0" min="0" oninput="updateStatFromInput('ausreisen')"><button class="counter-btn" onclick="adjustStat('ausreisen', 1)">+</button></div></div>
+        <div class="counter-group"><span>Banned</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('banne', -1)">-</button><input type="number" class="counter-input" id="count-banne" value="0" min="0" oninput="updateStatFromInput('banne')"><button class="counter-btn" onclick="adjustStat('banne', 1)">+</button></div></div>
         <hr style="border-color:var(--border); margin: 12px 0;">
         <label>Rolle ändern</label>
         <select id="edit-role" onchange="changeMemberRole()">
@@ -245,6 +245,13 @@
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-interface').style.display = 'block';
         document.body.style.display = 'block';
+        
+        // Erst lokalen Stand ins TB Feld laden
+        const localDocText = localStorage.getItem('malora_tb_notes_backup');
+        if (localDocText !== null) {
+            document.getElementById('live-google-doc').value = localDocText;
+        }
+
         loadLiveNotes(); 
         setInterval(loadLiveNotes, 10000); // Alle 10 Sekunden wird ALLES live mit deinen Kollegen abgeglichen!
     }
@@ -399,7 +406,14 @@
             let res = await fetch(BIN_URL, { headers: { "X-Master-Key": MASTER_KEY } });
             let data = await res.json(); liveNotes = data.record.notes || []; currentDocText = data.record.docText || "";
             renderLiveNotes();
-            if (document.activeElement !== document.getElementById('live-google-doc')) { document.getElementById('live-google-doc').value = currentDocText; }
+            
+            // Wenn der Benutzer gerade NICHT tippt, aktualisieren wir den Text und speichern lokal
+            if (document.activeElement !== document.getElementById('live-google-doc')) { 
+                if (currentDocText) {
+                    document.getElementById('live-google-doc').value = currentDocText; 
+                    localStorage.setItem('malora_tb_notes_backup', currentDocText);
+                }
+            }
         } catch (err) { console.log(err); }
     }
 
@@ -429,6 +443,10 @@
     function triggerDocCloudSave() {
         document.getElementById('doc-sync-status').innerText = "Tippt... (Warte auf Sync)";
         document.getElementById('doc-sync-status').style.color = "#fbbf24";
+        
+        // Sofort lokal sichern, damit es beim Reload gar nicht erst weggehen kann
+        localStorage.setItem('malora_tb_notes_backup', document.getElementById('live-google-doc').value);
+
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(async () => {
             currentDocText = document.getElementById('live-google-doc').value;
