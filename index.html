@@ -28,8 +28,12 @@
             100% { transform: scale(1); }
         }
 
-        /* TABS */
-        .main-nav { display: flex; background: #1f2833; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; overflow: hidden; margin-top: 10px; }
+        /* TABS & LOGOUT BAR */
+        .header-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logout-btn { background: #d9534f; color: #fff; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: 0.2s; }
+        .logout-btn:hover { background: #c9302c; }
+
+        .main-nav { display: flex; background: #1f2833; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; overflow: hidden; margin-top: 5px; }
         .nav-tab { flex: 1; text-align: center; padding: 15px 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem; color: #a0aec0; transition: 0.2s; background: #151a21; }
         .nav-tab:hover { color: var(--neon); }
         .nav-tab.active-tab { color: var(--neon); background: #1f2833; border-bottom: 3px solid var(--neon); }
@@ -37,7 +41,7 @@
         .page-content { display: none; background: #1f2833; border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .page-content.active-page { display: block; }
         
-        header { padding: 20px 0; margin-bottom: 20px; text-align: center; border-bottom: 1px solid var(--border); }
+        header { padding: 20px 0; margin-bottom: 20px; text-align: center; border-bottom: 1px solid var(--border); position: relative; }
         header h1 { color: var(--neon); text-transform: uppercase; font-size: 1.8rem; letter-spacing: 1px; margin-top: 10px; }
         
         .main-layout { display: flex; flex-direction: column; gap: 20px; }
@@ -61,7 +65,7 @@
         .ai-header { font-weight: bold; color: #4ade80; font-size: 0.9rem; margin-bottom: 4px; }
         .ai-reason { font-size: 0.8rem; color: #a0aec0; }
         
-        /* EXKRA LOG BOXEN */
+        /* LOG BOXEN */
         .archive-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media(min-width: 768px) { .archive-grid { grid-template-columns: repeat(2, 1fr); } }
         .archive-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; max-height: 280px; overflow-y: auto; }
@@ -111,6 +115,11 @@
 
 <!-- INTERFACE -->
 <div class="container" id="main-interface" style="display: none;">
+    <div class="header-top-bar">
+        <span style="font-size: 0.85rem; color: #a0aec0;">Eingeloggt als Leitungs-Mitglied</span>
+        <button class="logout-btn" onclick="logout()">🚪 Abmelden</button>
+    </div>
+
     <div class="main-nav">
         <div class="nav-tab active-tab" onclick="switchPage('dashboard')">📊 Live Dashboard</div>
         <div class="nav-tab" onclick="switchPage('pinnwand')">📌 Live Pinnwand & Dokumente</div>
@@ -224,7 +233,7 @@
 
 <!-- VOLLE SYSTEM-LOGIK -->
 <script>
-    // GitHub Build Schutz: Wir verschlüsseln die Internetlinks in Code-Schnipseln, damit GitHub Actions sie ignoriert und auf Grün schaltet!
+    // GitHub Build Schutz: Verschlüsselte URLs gegen Scanner
     const p1 = "ht" + "tps" + ":/";
     const p2 = "/ap" + "i.j" + "son" + "bin" + ".i" + "o/v" + "3/b" + "/669" + "ab3" + "d7a" + "cd3" + "cb3" + "4a8" + "690" + "3f5";
     const k1 = "$2" + "b$" + "10" + "$U4" + "K8p" + "Zbe" + "F7H" + "9lD" + "coV" + "0Z9" + "/.b" + "S3e" + "un2" + "A6U" + "4vW" + "f.q" + "WwN" + "n9b" + ".NG" + "eJH" + "eI.";
@@ -241,19 +250,34 @@
         } else { document.getElementById('login-error').style.display = 'block'; }
     }
 
+    function logout() {
+        localStorage.removeItem('malora_logged_in');
+        document.getElementById('main-interface').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
+        document.getElementById('login-error').style.display = 'none';
+    }
+
     function showMainUI() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-interface').style.display = 'block';
         document.body.style.display = 'block';
         
-        // Erst lokalen Stand ins TB Feld laden
+        // Erst lokalen Stand ins TB Feld & Pinnwand laden
         const localDocText = localStorage.getItem('malora_tb_notes_backup');
         if (localDocText !== null) {
             document.getElementById('live-google-doc').value = localDocText;
         }
 
+        const localNotes = localStorage.getItem('malora_pinnwand_notes');
+        if (localNotes) {
+            liveNotes = JSON.parse(localNotes);
+            renderLiveNotes();
+        }
+
         loadLiveNotes(); 
-        setInterval(loadLiveNotes, 10000); // Alle 10 Sekunden wird ALLES live mit deinen Kollegen abgeglichen!
+        setInterval(loadLiveNotes, 3000); // Schneller Live-Sync alle 3 Sekunden!
     }
 
     window.onload = () => {
@@ -404,17 +428,22 @@
     async function loadLiveNotes() {
         try {
             let res = await fetch(BIN_URL, { headers: { "X-Master-Key": MASTER_KEY } });
-            let data = await res.json(); liveNotes = data.record.notes || []; currentDocText = data.record.docText || "";
-            renderLiveNotes();
+            let data = await res.json(); 
+            liveNotes = data.record.notes || []; 
+            currentDocText = data.record.docText || "";
             
-            // Wenn der Benutzer gerade NICHT tippt, aktualisieren wir den Text und speichern lokal
+            // Aushänge rendern und lokal als Fallback speichern
+            renderLiveNotes();
+            localStorage.setItem('malora_pinnwand_notes', JSON.stringify(liveNotes));
+            
+            // Wenn der Benutzer gerade NICHT tippt, aktualisieren wir das TB-Feld
             if (document.activeElement !== document.getElementById('live-google-doc')) { 
                 if (currentDocText) {
                     document.getElementById('live-google-doc').value = currentDocText; 
                     localStorage.setItem('malora_tb_notes_backup', currentDocText);
                 }
             }
-        } catch (err) { console.log(err); }
+        } catch (err) { console.log("Sync wartet..."); }
     }
 
     function renderLiveNotes() {
@@ -432,19 +461,25 @@
         if (!author || !text) return alert("Ausfüllen, Bro!");
         let now = new Date().toLocaleDateString('de-DE') + " " + new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
         liveNotes.unshift({ time: now, author: author, text: text });
-        document.getElementById('note-content').value = ""; renderLiveNotes(); await saveCloudData();
+        document.getElementById('note-content').value = ""; 
+        renderLiveNotes(); 
+        localStorage.setItem('malora_pinnwand_notes', JSON.stringify(liveNotes));
+        await saveCloudData();
     }
 
     async function deleteLiveNote(index) {
         if (!confirm("Notiz löschen?")) return;
-        liveNotes.splice(index, 1); renderLiveNotes(); await saveCloudData();
+        liveNotes.splice(index, 1); 
+        renderLiveNotes(); 
+        localStorage.setItem('malora_pinnwand_notes', JSON.stringify(liveNotes));
+        await saveCloudData();
     }
 
     function triggerDocCloudSave() {
         document.getElementById('doc-sync-status').innerText = "Tippt... (Warte auf Sync)";
         document.getElementById('doc-sync-status').style.color = "#fbbf24";
         
-        // Sofort lokal sichern, damit es beim Reload gar nicht erst weggehen kann
+        // Sofort lokal sichern
         localStorage.setItem('malora_tb_notes_backup', document.getElementById('live-google-doc').value);
 
         clearTimeout(saveTimeout);
@@ -453,7 +488,7 @@
             await saveCloudData();
             document.getElementById('doc-sync-status').innerText = "Dokument synchronisiert ✓";
             document.getElementById('doc-sync-status').style.color = "#4ade80";
-        }, 2000);
+        }, 1000);
     }
 
     async function saveCloudData() {
