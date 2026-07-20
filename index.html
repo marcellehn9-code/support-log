@@ -3,192 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Tickets - Management</title>
+    <title>Maloracity - Management Zentrale</title>
     <style>
+        :root { --neon: #45f3ff; --bg: #0b0c10; --card: #131921; --border: #2f3e46; }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #0b0c10; color: #c5c6c7; padding: 20px; display: none; }
-        .container { max-width: 1400px; margin: 0 auto; }
+        body { background-color: var(--bg); color: #c5c6c7; padding: 15px; min-height: 100vh; }
         
-        /* Google-Style Haupt-Tabs ganz oben */
-        .main-nav { display: flex; background: #1f2833; border-radius: 8px 8px 0 0; border: 1px solid #2f3e46; border-bottom: none; overflow: hidden; }
-        .nav-tab { flex: 1; text-align: center; padding: 15px; cursor: pointer; font-weight: bold; font-size: 1.1rem; color: #a0aec0; transition: 0.2s; background: #151a21; }
-        .nav-tab:hover { color: #45f3ff; background: #1f2833; }
-        .nav-tab.active-tab { color: #45f3ff; background: #1f2833; border-bottom: 3px solid #45f3ff; }
+        /* Login Screen */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-box { background: #1f2833; padding: 40px 30px; border-radius: 12px; border: 2px solid var(--neon); width: 100%; max-width: 360px; text-align: center; box-shadow: 0 0 25px rgba(69,243,255,0.2); }
+        .login-box h2 { color: var(--neon); margin-top: 10px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-size: 1.5rem; }
+        
+        /* CSS Logo Design */
+        .logo-css { width: 90px; height: 90px; background: #151a21; border: 3px solid var(--neon); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; font-weight: 900; color: var(--neon); text-shadow: 0 0 15px var(--neon); box-shadow: 0 0 20px rgba(69,243,255,0.3); margin: 0 auto; animation: pulse 2.5s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(69,243,255,0.5); }
+            100% { transform: scale(1); }
+        }
 
-        /* Seiten-Inhalte */
-        .page-content { display: none; background: #1f2833; border: 1px solid #2f3e46; border-radius: 0 0 8px 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        /* Navigations Tabs */
+        .main-nav { display: flex; background: #1f2833; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; overflow: hidden; margin-top: 10px; }
+        .nav-tab { flex: 1; text-align: center; padding: 15px 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem; color: #a0aec0; transition: 0.2s; background: #151a21; }
+        .nav-tab:hover { color: var(--neon); }
+        .nav-tab.active-tab { color: var(--neon); background: #1f2833; border-bottom: 3px solid var(--neon); }
+
+        /* Seiten Container */
+        .page-content { display: none; background: #1f2833; border: 1px solid var(--border); border-radius: 0 0 8px 8px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
         .page-content.active-page { display: block; }
         
-        /* Professioneller Banner-Header mit eurem Teamleitung-Bild */
-        .banner-header { 
-            width: 100%;
-            height: 250px;
-            margin-bottom: 25px; 
-            border: 1px solid #2f3e46; 
-            border-radius: 12px;
-            background: url('27772.png') center/cover no-repeat;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-        }
+        header { padding: 20px 0; margin-bottom: 20px; text-align: center; border-bottom: 1px solid var(--border); }
+        header h1 { color: var(--neon); text-transform: uppercase; font-size: 1.8rem; letter-spacing: 1px; margin-top: 10px; }
         
-        /* Kleinerer Header-Bereich für Titel und Logo-Grafik darunter */
-        .header-sub {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            padding-bottom: 20px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #2f3e46;
-        }
-        .header-sub h1 { color: #45f3ff; text-transform: uppercase; font-size: 2rem; letter-spacing: 2px; }
-        .header-logo { width: 70px; height: 70px; border-radius: 10px; border: 1px solid #45f3ff; object-fit: cover; }
+        .main-layout { display: flex; flex-direction: column; gap: 20px; }
+        @media(min-width: 992px) { .main-layout { flex-direction: row; } .column-left { flex: 3; } .column-right { flex: 1; min-width: 350px; } }
+
+        .card { background: #131921; border-radius: 12px; border: 1px solid var(--border); padding: 20px; margin-bottom: 20px; }
+        .card h2 { color: var(--neon); text-transform: uppercase; font-size: 1.2rem; margin-bottom: 15px; border-left: 4px solid var(--neon); padding-left: 10px; }
         
-        .main-layout { display: flex; gap: 30px; }
-        .column-left { flex: 3; }
-        .column-right { flex: 1; min-width: 350px; }
-        
-        .card { background: #131921; border-radius: 12px; border: 1px solid #2f3e46; padding: 25px; margin-bottom: 25px; }
-        .card h2 { color: #45f3ff; text-transform: uppercase; font-size: 1.3rem; margin-bottom: 20px; border-left: 4px solid #45f3ff; padding-left: 10px; }
-        
-        /* Grid für Rollen */
-        .role-section { border-bottom: 1px solid #2f3e46; padding: 15px 0; }
-        .role-title { font-weight: bold; color: #66fcf1; font-size: 1rem; text-transform: uppercase; margin-bottom: 10px; }
+        /* Roster & Rollen */
+        .role-section { border-bottom: 1px solid var(--border); padding: 12px 0; }
+        .role-section:last-child { border-bottom: none; }
+        .role-title { font-weight: bold; color: #66fcf1; font-size: 0.95rem; text-transform: uppercase; margin-bottom: 10px; }
         .member-grid { display: flex; flex-wrap: wrap; gap: 10px; }
         
-        .member-card { background: #0b0c10; border: 1px solid #45f3ff; padding: 12px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; min-width: 150px; text-align: center; }
-        .member-card:hover { transform: translateY(-3px); box-shadow: 0 0 10px rgba(69,243,255,0.4); }
-        .member-name { font-weight: bold; font-size: 0.95rem; color: #fff; }
-        .member-stats-preview { font-size: 0.75rem; color: #a0aec0; margin-top: 5px; line-height: 1.3; }
+        .member-card { background: var(--bg); border: 1px solid var(--neon); padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; min-width: 140px; flex-grow: 1; text-align: center; }
+        .member-card:hover { transform: translateY(-2px); box-shadow: 0 0 10px rgba(69,243,255,0.3); }
+        .member-name { font-weight: bold; font-size: 0.9rem; color: #fff; word-break: break-all; }
+        .member-stats-preview { font-size: 0.75rem; color: #a0aec0; margin-top: 4px; line-height: 1.3; }
 
-        /* Uprank AI */
-        .ai-item { background: #101712; border: 1px solid #2e7d32; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        .ai-header { font-weight: bold; color: #4ade80; margin-bottom: 5px; }
-        .ai-reason { font-size: 0.85rem; color: #a0aec0; }
+        /* Uprank AI Boxen */
+        .ai-item { background: #101712; border: 1px solid #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+        .ai-header { font-weight: bold; color: #4ade80; font-size: 0.9rem; margin-bottom: 4px; }
+        .ai-reason { font-size: 0.8rem; color: #a0aec0; }
         
-        /* Archiv-Layout */
-        .archive-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 15px; }
-        .archive-box { background: #0b0c10; border: 1px solid #2f3e46; border-radius: 8px; padding: 20px; max-height: 350px; overflow-y: auto; }
-        .archive-box h3 { font-size: 1.1rem; margin-bottom: 15px; padding-bottom: 5px; border-bottom: 1px solid #2f3e46; text-transform: uppercase; }
-        .box-upranks h3 { color: #fbbf24; }
-        .box-kicks h3 { color: #f87171; }
-        .box-supports h3 { color: #60a5fa; }
-        .box-einreisen h3 { color: #34d399; }
+        /* Archiv & Sortierte Boxen */
+        .archive-grid { display: flex; flex-direction: column; gap: 15px; }
+        .archive-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; max-height: 280px; overflow-y: auto; }
+        .archive-box h3 { font-size: 1rem; margin-bottom: 10px; padding-bottom: 4px; border-bottom: 1px solid var(--border); text-transform: uppercase; }
+        .box-upranks h3 { color: #fbbf24; } .box-kicks h3 { color: #f87171; } .box-supports h3 { color: #60a5fa; } .box-einreisen h3 { color: #34d399; }
         
-        /* Modal / Popup */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #1f2833; border: 2px solid #45f3ff; border-radius: 12px; padding: 30px; width: 500px; max-width: 90%; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2f3e46; padding-bottom: 10px; }
-        .modal-header h3 { color: #66fcf1; font-size: 1.4rem; }
-        .close-btn { color: #fff; cursor: pointer; font-size: 1.5rem; }
+        /* Live Pinnwand Styling */
+        .board-note { background: #1f2833; border: 1px solid var(--neon); border-radius: 8px; padding: 15px; margin-bottom: 15px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .board-note .note-meta { font-size: 0.75rem; color: var(--neon); margin-bottom: 5px; font-weight: bold; }
+        .board-note .note-text { font-size: 0.95rem; color: #fff; white-space: pre-wrap; line-height: 1.4; }
         
-        .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #0b0c10; padding: 10px 15px; border-radius: 6px; }
-        .counter-controls { display: flex; align-items: center; gap: 10px; }
-        .counter-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #45f3ff; color: #0b0c10; font-weight: bold; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        /* Interaktives Popup (Modal) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
+        .modal-content { background: #1f2833; border: 2px solid var(--neon); border-radius: 12px; padding: 20px; width: 100%; max-width: 440px; box-shadow: 0 4px 25px rgba(0,0,0,0.6); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .modal-header h3 { color: #66fcf1; font-size: 1.2rem; word-break: break-all; }
+        .close-btn { color: #fff; cursor: pointer; font-size: 1.5rem; font-weight: bold; }
         
-        input.counter-input { width: 60px; padding: 5px; background: #1f2833; border: 1px solid #45f3ff; border-radius: 4px; color: #fff; font-size: 1rem; font-weight: bold; text-align: center; margin-bottom: 0; }
+        .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--bg); padding: 8px 12px; border-radius: 6px; }
+        .counter-group span { font-size: 0.9rem; font-weight: bold; }
+        .counter-controls { display: flex; align-items: center; gap: 8px; }
+        .counter-btn { width: 30px; height: 30px; border-radius: 50%; border: none; background: var(--neon); color: var(--bg); font-weight: bold; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
         
-        input, select, textarea { width: 100%; padding: 10px; background: #0b0c10; border: 1px solid #2f3e46; border-radius: 6px; color: #fff; margin-bottom: 15px; }
-        button.action-btn { background: #45f3ff; color: #0b0c10; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
-        button.delete-btn { background: #d9534f; color: #fff; }
-        
-        .log-item { background: #131921; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 0.85rem; border-left: 3px solid #45f3ff; display: flex; justify-content: space-between; align-items: center; line-height: 1.4; }
-        .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 10px; }
+        input.counter-input { width: 55px; padding: 4px; background: #1f2833; border: 1px solid var(--neon); border-radius: 4px; color: #fff; font-size: 0.95rem; font-weight: bold; text-align: center; margin-bottom: 0; }
 
-        /* Login-Screen Styling */
-        #login-screen { display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0b0c10; justify-content: center; align-items: center; z-index: 9999; }
-        .login-box { background: #1f2833; padding: 40px; border-radius: 12px; border: 2px solid #45f3ff; width: 400px; text-align: center; box-shadow: 0 0 25px rgba(69,243,255,0.3); display: flex; flex-direction: column; align-items: center; }
-        .login-box h2 { color: #45f3ff; margin-top: 15px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        .login-logo { width: 130px; height: 130px; border-radius: 16px; border: 2px solid #45f3ff; box-shadow: 0 0 20px rgba(69,243,255,0.4); margin-bottom: 10px; object-fit: cover; }
+        input, select, textarea { width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: #fff; margin-bottom: 12px; font-size: 0.9rem; }
+        button.action-btn { background: var(--neon); color: var(--bg); border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 8px; font-size: 0.9rem; }
+        button.delete-btn { background: #d9534f; color: #fff; margin-top: 5px; }
+        
+        .log-item { background: #131921; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; border-left: 3px solid var(--neon); display: flex; justify-content: space-between; align-items: center; line-height: 1.3; }
+        .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; margin-left: 8px; font-size: 1rem; padding: 0 4px; }
     </style>
 </head>
 <body>
 
-<!-- LOGIN POPUP -->
+<!-- LOGIN SCREEN -->
 <div id="login-screen">
     <div class="login-box">
-        <!-- Lädt euer quadratisches Logo direkt lokal aus dem GitHub Ordner -->
-        <img class="login-logo" src="27771.png" alt="Malora City Logo">
+        <div class="logo-css">M</div>
         <h2>Leitungs Login</h2>
         <input type="text" id="login-username" placeholder="Benutzername">
         <input type="password" id="login-password" placeholder="Passwort">
         <button class="action-btn" onclick="checkLogin()">Einloggen</button>
-        <div id="login-error" style="color: #d9534f; margin-top: 10px; display: none; font-weight: bold;">Falsche Daten, Bro!</div>
+        <div id="login-error" style="color: #d9534f; margin-top: 10px; display: none; font-weight: bold; font-size: 0.85rem;">Falsche Daten, Bro!</div>
     </div>
 </div>
 
+<!-- HAUPT INTERFACE -->
 <div class="container" id="main-interface" style="display: none;">
-    <!-- Google-Style Tabs -->
     <div class="main-nav">
-        <div class="nav-tab active-tab" onclick="switchPage('dashboard')">📊 Live Steuerungs-Dashboard</div>
-        <div class="nav-tab" onclick="switchPage('archiv')">🗄️ Strukturiertes Log-Archiv</div>
+        <div class="nav-tab active-tab" onclick="switchPage('dashboard')">📊 Live Dashboard</div>
+        <div class="nav-tab" onclick="switchPage('pinnwand')">📌 Live Pinnwand & Notizen</div>
+        <div class="nav-tab" onclick="switchPage('archiv')">🗄️ Log-Archiv</div>
     </div>
 
-    <!-- SEITE 1: DASHBOARD -->
+    <!-- TAB 1: DASHBOARD -->
     <div id="page-dashboard" class="page-content active-page">
-        <!-- Großer visueller Banner ganz oben -->
-        <div class="banner-header"></div>
-        
-        <div class="header-sub">
-            <img class="header-logo" src="27771.png" alt="Malora City Logo">
+        <header>
+            <div class="logo-css" style="width:70px; height:70px; font-size:2.2rem; border-radius:12px;">M</div>
             <h1>Support & Einreise - Live Zentrale</h1>
-        </div>
+        </header>
 
         <div class="main-layout">
             <div class="column-left">
                 <div class="card">
                     <h2>Team-Übersicht (Für Steuerung anklicken)</h2>
-                    <button class="action-btn" style="margin-bottom:20px; background:#66fcf1;" onclick="openAddMemberModal()">＋ Neues Teammitglied hinzufügen</button>
+                    <button class="action-btn" style="margin-bottom:15px; background:#66fcf1;" onclick="openAddMemberModal()">＋ Neues Teammitglied hinzufügen</button>
                     <div id="team-roster"></div>
                 </div>
             </div>
 
             <div class="column-right">
                 <div class="card" style="border: 1px solid #4ade80; background: #0e1611;">
-                    <h2 style="color: #4ade80; border-left-color: #4ade80;">🚀 Uprank AI Assistent</h2>
+                    <h2>🚀 Uprank AI Assistent</h2>
                     <div id="ai-suggestions">
-                        <div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">
-                            Vergib Punkte, um automatische Uprank-Tipps zu erhalten.
-                        </div>
+                        <div style="font-size:0.8rem; color:#a0aec0; text-align:center; padding:10px;">Vergib Punkte, um automatische Uprank-Tipps zu erhalten.</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SEITE 2: LOG-ARCHIV -->
-    <div id="page-archiv" class="page-content">
-        <div class="banner-header"></div>
+    <!-- TAB 2: LIVE PINNWAND (ZUGRIFF FÜR ALLE KOLLEGEN) -->
+    <div id="page-pinnwand" class="page-content">
+        <header>
+            <div class="logo-css" style="width:70px; height:70px; font-size:2.2rem; border-radius:12px;">M</div>
+            <h1>Teamleitung Live Pinnwand</h1>
+        </header>
         
-        <div class="header-sub">
-            <img class="header-logo" src="27771.png" alt="Malora City Logo">
-            <h1>Management Log-Archiv</h1>
+        <div class="card">
+            <h2>Neue Notiz / Ankündigung verfassen</h2>
+            <input type="text" id="note-author" placeholder="Dein Name / Deine Position (z.B. Lyrox / PL)">
+            <textarea id="note-content" style="height: 100px;" placeholder="Schreibe hier die Teaminformationen oder Notizen rein, die deine Kollegen sehen sollen..."></textarea>
+            <button class="action-btn" style="background:#66fcf1;" onclick="addLiveNote()">📌 Notiz live für alle posten</button>
         </div>
+
+        <div class="card">
+            <h2>Aktive Aushänge & Notizen</h2>
+            <div id="pinnwand-notes-list">
+                <p style="text-align:center; color:#a0aec0; padding:10px;">Lade Live-Notizen...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: LOG ARCHIV -->
+    <div id="page-archiv" class="page-content">
+        <header>
+            <div class="logo-css" style="width:70px; height:70px; font-size:2.2rem; border-radius:12px;">M</div>
+            <h1>Management Log-Archiv</h1>
+        </header>
         
         <div class="card">
             <h2>Sortierte Log-Datenbank</h2>
             <div class="archive-grid">
                 <div class="archive-box box-upranks">
                     <h3>🔼 Upranks & Rollen-Logs</h3>
-                    <div id="log-upranks"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
+                    <div id="log-upranks"><p style="color:#555; font-size:0.8rem;">Keine Einträge.</p></div>
                 </div>
                 <div class="archive-box box-kicks">
                     <h3>❌ Team Kicks & Austritte</h3>
-                    <div id="log-kicks"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
+                    <div id="log-kicks"><p style="color:#555; font-size:0.8rem;">Keine Einträge.</p></div>
                 </div>
                 <div class="archive-box box-supports">
                     <h3>🎫 Support- & Ticket-Änderungen</h3>
-                    <div id="log-supports"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
+                    <div id="log-supports"><p style="color:#555; font-size:0.8rem;">Keine Einträge.</p></div>
                 </div>
                 <div class="archive-box box-einreisen">
                     <h3>🛃 Einreisen, Banne & Feedback</h3>
-                    <div id="log-einreisen"><p style="color:#555; font-size:0.85rem;">Keine Einträge.</p></div>
+                    <div id="log-einreisen"><p style="color:#555; font-size:0.8rem;">Keine Einträge.</p></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- MODAL: BEARBEITEN -->
+<!-- MODAL POPUP BEARBEITEN -->
 <div id="memberModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -196,205 +200,115 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
         </div>
         
-        <div class="counter-group">
-            <span>Tickets</span>
-            <div class="counter-controls">
-                <button class="counter-btn" onclick="adjustStat('tickets', -1)">-</button>
-                <input type="number" class="counter-input" id="count-tickets" value="0" min="0" oninput="updateStatFromInput('tickets')">
-                <button class="counter-btn" onclick="adjustStat('tickets', 1)">+</button>
-            </div>
-        </div>
-        <div class="counter-group">
-            <span>Supports</span>
-            <div class="counter-controls">
-                <button class="counter-btn" onclick="adjustStat('supports', -1)">-</button>
-                <input type="number" class="counter-input" id="count-supports" value="0" min="0" oninput="updateStatFromInput('supports')">
-                <button class="counter-btn" onclick="adjustStat('supports', 1)">+</button>
-            </div>
-        </div>
-        <div class="counter-group">
-            <span>Feedbacks</span>
-            <div class="counter-controls">
-                <button class="counter-btn" onclick="adjustStat('feedbacks', -1)">-</button>
-                <input type="number" class="counter-input" id="count-feedbacks" value="0" min="0" oninput="updateStatFromInput('feedbacks')">
-                <button class="counter-btn" onclick="adjustStat('feedbacks', 1)">+</button>
-            </div>
-        </div>
-        <div class="counter-group">
-            <span>Einreisen</span>
-            <div class="counter-controls">
-                <button class="counter-btn" onclick="adjustStat('einreisen', -1)">-</button>
-                <input type="number" class="counter-input" id="count-einreisen" value="0" min="0" oninput="updateStatFromInput('einreisen')">
-                <button class="counter-btn" onclick="adjustStat('einreisen', 1)">+</button>
-            </div>
-        </div>
-        <div class="counter-group">
-            <span>Banne</span>
-            <div class="counter-controls">
-                <button class="counter-btn" onclick="adjustStat('banne', -1)">-</button>
-                <input type="number" class="counter-input" id="count-banne" value="0" min="0" oninput="updateStatFromInput('banne')">
-                <button class="counter-btn" onclick="adjustStat('banne', 1)">+</button>
-            </div>
-        </div>
+        <div class="counter-group"><span>Tickets</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('tickets', -1)">-</button><input type="number" class="counter-input" id="count-tickets" value="0" min="0" oninput="updateStatFromInput('tickets')"><button class="counter-btn" onclick="adjustStat('tickets', 1)">+</button></div></div>
+        <div class="counter-group"><span>Supports</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('supports', -1)">-</button><input type="number" class="counter-input" id="count-supports" value="0" min="0" oninput="updateStatFromInput('supports')"><button class="counter-btn" onclick="adjustStat('supports', 1)">+</button></div></div>
+        <div class="counter-group"><span>Feedbacks</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('feedbacks', -1)">-</button><input type="number" class="counter-input" id="count-feedbacks" value="0" min="0" oninput="updateStatFromInput('feedbacks')"><button class="counter-btn" onclick="adjustStat('feedbacks', 1)">+</button></div></div>
+        <div class="counter-group"><span>Einreisen</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('einreisen', -1)">-</button><input type="number" class="counter-input" id="count-einreisen" value="0" min="0" oninput="updateStatFromInput('einreisen')"><button class="counter-btn" onclick="adjustStat('einreisen', 1)">+</button></div></div>
+        <div class="counter-group"><span>Banne</span><div class="counter-controls"><button class="counter-btn" onclick="adjustStat('banne', -1)">-</button><input type="number" class="counter-input" id="count-banne" value="0" min="0" oninput="updateStatFromInput('banne')"><button class="counter-btn" onclick="adjustStat('banne', 1)">+</button></div></div>
 
-        <hr style="border-color:#2f3e46; margin: 15px 0;">
+        <hr style="border-color:var(--border); margin: 12px 0;">
 
-        <label>Rolle ändern</label>
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:5px;">Rolle ändern</label>
         <select id="edit-role" onchange="changeMemberRole()">
-            <option value="Projektleitung">Projektleitung</option>
-            <option value="Stv. Projektleitung">Stv. Projektleitung</option>
-            <option value="Teamleitung">Teamleitung</option>
-            <option value="Stv. Teamleitung">Stv. Teamleitung</option>
-            <option value="Fraktionsverwaltungleitung">Fraktionsverwaltungleitung</option>
-            <option value="Fraktionsverwaltung">Fraktionsverwaltung</option>
-            <option value="Head Developer">Head Developer</option>
-            <option value="Developer">Developer</option>
-            <option value="Jr. Developer">Jr. Developer</option>
-            <option value="Head Analyst">Head Analyst</option>
-            <option value="Analyst">Analyst</option>
-            <option value="Probe Analyst">Probe Analyst</option>
-            <option value="Head Administrator">Head Administrator</option>
-            <option value="Sr. Administrator">Sr. Administrator</option>
-            <option value="Administrator">Administrator</option>
-            <option value="Test-Administrator">Test-Administrator</option>
-            <option value="Head Moderator">Head Moderator</option>
-            <option value="Moderator">Moderator</option>
-            <option value="Test - Moderator">Test - Moderator</option>
-            <option value="Head Supporter">Head Supporter</option>
-            <option value="Sr. Supporter">Sr. Supporter</option>
-            <option value="Supporter">Supporter</option>
-            <option value="Test Supporter">Test Supporter</option>
-            <option value="Einreisebeamter">Einreisebeamter</option>
+            <option value="Projektleitung">Projektleitung</option><option value="Stv. Projektleitung">Stv. Projektleitung</option><option value="Teamleitung">Teamleitung</option><option value="Stv. Teamleitung">Stv. Teamleitung</option><option value="Fraktionsverwaltungleitung">Fraktionsverwaltungleitung</option><option value="Fraktionsverwaltung">Fraktionsverwaltung</option><option value="Head Developer">Head Developer</option><option value="Developer">Developer</option><option value="Jr. Developer">Jr. Developer</option><option value="Head Analyst">Head Analyst</option><option value="Analyst">Analyst</option><option value="Probe Analyst">Probe Analyst</option><option value="Head Administrator">Head Administrator</option><option value="Sr. Administrator">Sr. Administrator</option><option value="Administrator">Administrator</option><option value="Test-Administrator">Test-Administrator</option><option value="Head Moderator">Head Moderator</option><option value="Moderator">Moderator</option><option value="Test - Moderator">Test - Moderator</option><option value="Head Supporter">Head Supporter</option><option value="Sr. Supporter">Sr. Supporter</option><option value="Supporter">Supporter</option><option value="Test Supporter">Test Supporter</option><option value="Einreisebeamter">Einreisebeamter</option>
         </select>
 
-        <label>Detaillierten Log/Kommentar schreiben</label>
-        <textarea id="modal-text-log" placeholder="Besondere Anmerkung eintragen..."></textarea>
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:5px;">Detaillierten Log/Notiz schreiben</label>
+        <textarea id="modal-text-log" placeholder="Anmerkung, Lob oder Beschwerde eintragen..."></textarea>
         <button class="action-btn" onclick="saveTextLog()">Notiz hinzufügen</button>
-        
-        <button class="action-btn delete-btn" onclick="deleteMember()">Mitglied aus Team entfernen</button>
+        <button class="action-btn delete-btn" onclick="deleteMember()">Aus Team entfernen</button>
     </div>
 </div>
 
-<!-- MODAL: HINZUFÜGEN -->
+<!-- MODAL POPUP HINZUFÜGEN -->
 <div id="addMemberModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Neues Mitglied hinzufügen</h3>
             <span class="close-btn" onclick="closeAddModal()">&times;</span>
         </div>
-        <label>Name / Discord-Tag</label>
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:5px;">Name / Discord-Tag</label>
         <input type="text" id="add-name" placeholder="z.B. @MC | NeuerBeamter">
-        
-        <label>Rolle</label>
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:5px;">Rolle</label>
         <select id="add-role">
-            <option value="Test Supporter">Test Supporter</option>
-            <option value="Supporter">Supporter</option>
-            <option value="Einreisebeamter">Einreisebeamter</option>
-            <option value="Probe Analyst">Probe Analyst</option>
-            <option value="Analyst">Analyst</option>
-            <option value="Test - Moderator">Test - Moderator</option>
+            <option value="Test Supporter">Test Supporter</option><option value="Supporter">Supporter</option><option value="Einreisebeamter">Einreisebeamter</option><option value="Probe Analyst">Probe Analyst</option><option value="Analyst">Analyst</option><option value="Test - Moderator">Test - Moderator</option>
         </select>
         <button class="action-btn" onclick="addMember()">Hinzufügen</button>
     </div>
 </div>
 
 <script>
+    // Ein freier, globaler Cloud-Speicher für eure Live-Notizen (Echtzeit-Synchronisierung)
+    const BIN_URL = "https://api.jsonbin.io/v3/b/669ab3d7acd3cb34a86903f5"; 
+    const MASTER_KEY = "$2b$10$U4K8pZbeF7H9lDcoV0Z9/.bS3eun2A6U4vWf.qWwNn9b.NGeJHeI."; // Ermöglicht Live-Schreiben für alle Leitungen
+
     function checkLogin() {
         let u = document.getElementById('login-username').value;
         let p = document.getElementById('login-password').value;
         if(u === "Maloracity" && p === "Maloracity110") {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-interface').style.display = 'block';
-            document.body.style.display = 'block';
-        } else {
-            document.getElementById('login-error').style.display = 'block';
-        }
+            localStorage.setItem('malora_logged_in', 'true');
+            showMainUI();
+        } else { document.getElementById('login-error').style.display = 'block'; }
     }
 
-    let teamData = {
-        "Projektleitung": ["@MC | Lyrox™"],
-        "Stv. Projektleitung": ["@MC | DonXVitoo™", "@MC | Tobi👀"],
-        "Teamleitung": ["@MC | Paul", "@MC | ZmtxTV 👀"],
-        "Stv. Teamleitung": ["@MC | CityNeko 👀"],
-        "Fraktionsverwaltungleitung": ["@MC | Jaden", "@MC | John"],
-        "Fraktionsverwaltung": [],
-        "Head Developer": ["@MC | Knoppers.exe"],
-        "Developer": [],
-        "Jr. Developer": ["@OnlyError"],
-        "Head Analyst": ["@MC | Hassan", "<@727523575950606396>", "@MC | Ling.js", "@MC | Turbo.dll"],
-        "Analyst": ["<@562260580988092475>", "<@772069989582110732>", "@MC | Lias", "@MC | Ling.js", "<@148278991352164494>"],
-        "Probe Analyst": [],
-        "Head Administrator": ["@MC | Pauli™"],
-        "Sr. Administrator": ["@MC | Patrick 👀"],
-        "Administrator": ["@MC | HIRA", "@MC | Lenny"],
-        "Test-Administrator": ["@MC I Eliasdwd"],
-        "Head Moderator": ["@MC | Matti"],
-        "Moderator": ["@MC | ★ R Y Z E ★", "@MC | Exy.lua", "@MC | Knobi", "@MC | Līåm™", "@MC | Sidney"],
-        "Test - Moderator": ["@MC | zonex", "@MC | Andre ✝"],
-        "Head Supporter": [],
-        "Sr. Supporter": ["@MC | Kellox"],
-        "Supporter": ["@MC | Aspy", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Klaisnax", "@MC | MD-01 Tim Dlnaro", "@MC | MD-02 368kk", "<@381082149803261954>", "@MC | Tristan Tiefprais", "@MC | Vito Nacé", "@MC I Jonas👀", "@MC I Louis", "@MC I Nick.exe"],
-        "Test Supporter": ["<@1456434493236711499>", "@MC | Dave Shanke", "<@704072513617133638>", "<@1066692526158905346>", "<@1266035889209872489>", "@MC | Luca Abi", "@MC | Nick", "@MC | syzulex", "@MC l Jay"],
-        "Einreisebeamter": ["@MC | ★ R Y Z E ★", "@MC | Aspy", "@MC | HIRA", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Kellox", "@MC | MD-02 368kk", "@MC | syzulex", "@MC | Nick.exe"]
+    function showMainUI() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-interface').style.display = 'block';
+        document.body.style.display = 'block';
+        loadLiveNotes(); // Notizen laden sobald eingeloggt
+        setInterval(loadLiveNotes, 10000); // Alle 10 Sekunden automatisch live synchronisieren
+    }
+
+    window.onload = () => {
+        if(localStorage.getItem('malora_logged_in') === 'true') { showMainUI(); } 
+        else { document.body.style.display = 'block'; }
     };
 
-    let stats = {};
-    let textLogs = [];
+    let teamData = JSON.parse(localStorage.getItem('malora_team_structure')) || {
+        "Projektleitung": ["@MC | Lyrox™"], "Stv. Projektleitung": ["@MC | DonXVitoo™", "@MC | Tobi👀"], "Teamleitung": ["@MC | Paul", "@MC | ZmtxTV 👀"], "Stv. Teamleitung": ["@MC | CityNeko 👀"], "Fraktionsverwaltungleitung": ["@MC | Jaden", "@MC | John"], "Fraktionsverwaltung": [], "Head Developer": ["@MC | Knoppers.exe"], "Developer": [], "Jr. Developer": ["@OnlyError"], "Head Analyst": ["@MC | Hassan", "<@727523575950606396>", "@MC | Ling.js", "@MC | Turbo.dll"], "Analyst": ["<@562260580988092475>", "<@772069989582110732>", "@MC | Lias", "@MC | Ling.js", "<@148278991352164494>"], "Probe Analyst": [], "Head Administrator": ["@MC | Pauli™"], "Sr. Administrator": ["@MC | Patrick 👀"], "Administrator": ["@MC | HIRA", "@MC | Lenny"], "Test-Administrator": ["@MC I Eliasdwd"], "Head Moderator": ["@MC | Matti"], "Moderator": ["@MC | ★ R Y Z E ★", "@MC | Exy.lua", "@MC | Knobi", "@MC | Līåm™", "@MC | Sidney"], "Test - Moderator": ["@MC | zonex", "@MC | Andre ✝"], "Head Supporter": [], "Sr. Supporter": ["@MC | Kellox"], "Supporter": ["@MC | Aspy", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Klaisnax", "@MC | MD-01 Tim Dlnaro", "@MC | MD-02 368kk", "<@381082149803261954>", "@MC | Tristan Tiefprais", "@MC | Vito Nacé", "@MC I Jonas👀", "@MC I Louis", "@MC I Nick.exe"], "Test Supporter": ["<@1456434493236711499>", "@MC | Dave Shanke", "<@704072513617133638>", "<@1066692526158905346>", "<@1266035889209872489>", "@MC | Luca Abi", "@MC | Nick", "@MC | syzulex", "@MC l Jay"], "Einreisebeamter": ["@MC | ★ R Y Z E ★", "@MC | Aspy", "@MC | HIRA", "@MC | IDropMyTable", "@MC | Jamal", "@MC | Kellox", "@MC | MD-02 368kk", "@MC | syzulex", "@MC | Nick.exe"]
+    };
+
+    let stats = JSON.parse(localStorage.getItem('malora_member_stats')) || {};
+    let textLogs = JSON.parse(localStorage.getItem('malora_management_logs')) || [];
+    let liveNotes = [];
     let currentSelectedMember = "";
 
     function switchPage(pageId) {
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active-tab'));
         document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active-page'));
-        
         if (pageId === 'dashboard') {
             document.querySelectorAll('.nav-tab')[0].classList.add('active-tab');
             document.getElementById('page-dashboard').classList.add('active-page');
-        } else {
+        } else if (pageId === 'pinnwand') {
             document.querySelectorAll('.nav-tab')[1].classList.add('active-tab');
+            document.getElementById('page-pinnwand').classList.add('active-page');
+        } else {
+            document.querySelectorAll('.nav-tab')[2].classList.add('active-tab');
             document.getElementById('page-archiv').classList.add('active-page');
         }
     }
 
-    function initStats() {
-        for (let role in teamData) {
-            teamData[role].forEach(name => {
-                if (!stats[name]) stats[name] = { tickets: 0, supports: 0, feedbacks: 0, einreisen: 0, banne: 0, role: role };
-            });
-        }
-    }
+    function initStats() { for (let role in teamData) { teamData[role].forEach(name => { if (!stats[name]) stats[name] = { tickets: 0, supports: 0, feedbacks: 0, einreisen: 0, banne: 0, role: role }; }); } }
 
     function renderTeam() {
-        let container = document.getElementById('team-roster');
-        container.innerHTML = "";
-        
+        let container = document.getElementById('team-roster'); container.innerHTML = "";
         for (let role in teamData) {
-            let section = document.createElement('div');
-            section.className = 'role-section';
-            
-            let title = document.createElement('div');
-            title.className = 'role-title';
-            title.innerText = role;
-            section.appendChild(title);
-            
-            let grid = document.createElement('div');
-            grid.className = 'member-grid';
-            
-            if(teamData[role].length === 0) {
-                grid.innerHTML = '<span style="color:#555; font-size:0.85rem;">Keine Mitglieder</span>';
-            } else {
+            let section = document.createElement('div'); section.className = 'role-section';
+            let title = document.createElement('div'); title.className = 'role-title'; title.innerText = role; section.appendChild(title);
+            let grid = document.createElement('div'); grid.className = 'member-grid';
+            if(teamData[role].length === 0) { grid.innerHTML = '<span style="color:#555; font-size:0.8rem; padding-left:5px;">Keine Mitglieder</span>'; } 
+            else {
                 teamData[role].forEach(name => {
                     let mStats = stats[name] || { tickets: 0, supports: 0, feedbacks: 0, einreisen: 0, banne: 0 };
-                    let mCard = document.createElement('div');
-                    mCard.className = 'member-card';
-                    mCard.onclick = () => openModal(name);
-                    mCard.innerHTML = `<div class="member-name">${name}</div>
-                    <div class="member-stats-preview">🎫 ${mStats.tickets} | 🛠️ ${mStats.supports} | ⭐ ${mStats.feedbacks}<br>🛃 ${mStats.einreisen} | 🚫 ${mStats.banne}</div>`;
+                    let mCard = document.createElement('div'); mCard.className = 'member-card'; mCard.onclick = () => openModal(name);
+                    mCard.innerHTML = `<div class="member-name">${name}</div><div class="member-stats-preview">🎫 ${mStats.tickets} | 🛠️ ${mStats.supports} | ⭐ ${mStats.feedbacks}<br>🛃 ${mStats.einreisen} | 🚫 ${mStats.banne}</div>`;
                     grid.appendChild(mCard);
                 });
             }
-            section.appendChild(grid);
-            container.appendChild(section);
+            section.appendChild(grid); container.appendChild(section);
         }
+        localStorage.setItem('malora_member_stats', JSON.stringify(stats));
+        localStorage.setItem('malora_team_structure', JSON.stringify(teamData));
     }
 
     function openModal(name) {
@@ -419,149 +333,150 @@
         if (!stats[currentSelectedMember][statType]) stats[currentSelectedMember][statType] = 0;
         stats[currentSelectedMember][statType] = Math.max(0, stats[currentSelectedMember][statType] + val);
         document.getElementById(`count-${statType}`).value = stats[currentSelectedMember][statType];
-        
-        let category = (statType === 'tickets' || statType === 'supports') ? 'support' : 'einreisen';
-        addLogItem(`${currentSelectedMember}: ${statType.toUpperCase()} ${val > 0 ? '+' + val : val}`, category);
-        
-        renderTeam();
-        calculateAiUpranks();
+        renderTeam(); calculateAiUpranks();
     }
 
     function updateStatFromInput(statType) {
         if (!currentSelectedMember) return;
         let inputVal = parseInt(document.getElementById(`count-${statType}`).value);
         if (isNaN(inputVal) || inputVal < 0) inputVal = 0;
-        
         stats[currentSelectedMember][statType] = inputVal;
-        let category = (statType === 'tickets' || statType === 'supports') ? 'support' : 'einreisen';
-        addLogItem(`${currentSelectedMember}: ${statType.toUpperCase()} auf ${inputVal} gesetzt`, category);
-        
-        renderTeam();
-        calculateAiUpranks();
+        renderTeam(); calculateAiUpranks();
     }
 
     function changeMemberRole() {
-        let newRole = document.getElementById('edit-role').value;
-        let oldRole = stats[currentSelectedMember].role;
-        
+        let newRole = document.getElementById('edit-role').value; let oldRole = stats[currentSelectedMember].role;
         if(oldRole === newRole) return;
-        
         teamData[oldRole] = teamData[oldRole].filter(n => n !== currentSelectedMember);
-        if (!teamData[newRole]) teamData[newRole] = [];
-        teamData[newRole].push(currentSelectedMember);
+        if (!teamData[newRole]) teamData[newRole] = []; teamData[newRole].push(currentSelectedMember);
         stats[currentSelectedMember].role = newRole;
-        
         addLogItem(`🔼 BEFÖRDERUNG: ${currentSelectedMember} von ${oldRole} zu ${newRole}`, 'uprank');
-        renderTeam();
-        calculateAiUpranks();
+        renderTeam(); calculateAiUpranks();
     }
 
     function saveTextLog() {
-        let txt = document.getElementById('modal-text-log').value;
-        if(!txt.trim()) return;
+        let txt = document.getElementById('modal-text-log').value; if(!txt.trim()) return;
         addLogItem(`📝 NOTIZ für ${currentSelectedMember}: ${txt}`, 'einreisen');
-        document.getElementById('modal-text-log').value = "";
-        calculateAiUpranks();
+        document.getElementById('modal-text-log').value = ""; calculateAiUpranks();
     }
 
     function deleteMember() {
         if(!confirm(`Möchtest du ${currentSelectedMember} wirklich aus dem Team löschen?`)) return;
-        let role = stats[currentSelectedMember].role;
-        teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
+        let role = stats[currentSelectedMember].role; teamData[role] = teamData[role].filter(n => n !== currentSelectedMember);
         delete stats[currentSelectedMember];
-        
         addLogItem(`❌ TEAM-KICK: ${currentSelectedMember} wurde entfernt.`, 'kick');
-        closeModal();
-        renderTeam();
-        calculateAiUpranks();
+        closeModal(); renderTeam(); calculateAiUpranks();
     }
 
     function addMember() {
-        let name = document.getElementById('add-name').value.trim();
-        let role = document.getElementById('add-role').value;
+        let name = document.getElementById('add-name').value.trim(); let role = document.getElementById('add-role').value;
         if(!name) return alert("Bitte Namen eingeben!");
-        
-        if(!teamData[role]) teamData[role] = [];
-        teamData[role].push(name);
+        if(!teamData[role]) teamData[role] = []; teamData[role].push(name);
         stats[name] = { tickets: 0, supports: 0, feedbacks: 0, einreisen: 0, banne: 0, role: role };
-        
         addLogItem(`📥 NEUES MITGLIED: ${name} als ${role} beigetreten.`, 'uprank');
-        closeAddModal();
-        document.getElementById('add-name').value = "";
-        renderTeam();
-        calculateAiUpranks();
+        closeAddModal(); document.getElementById('add-name').value = ""; renderTeam(); calculateAiUpranks();
     }
 
     function addLogItem(message, category) {
         let now = new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
         textLogs.unshift({time: now, msg: message, id: Date.now(), cat: category});
+        localStorage.setItem('malora_management_logs', JSON.stringify(textLogs));
         renderLogs();
     }
 
     function removeLog(id) {
         textLogs = textLogs.filter(l => l.id !== id);
+        localStorage.setItem('malora_management_logs', JSON.stringify(textLogs));
         renderLogs();
     }
 
     function renderLogs() {
-        let containers = {
-            uprank: document.getElementById('log-upranks'),
-            kick: document.getElementById('log-kicks'),
-            support: document.getElementById('log-supports'),
-            einreisen: document.getElementById('log-einreisen')
-        };
-        
+        let containers = { uprank: document.getElementById('log-upranks'), kick: document.getElementById('log-kicks'), support: document.getElementById('log-supports'), einreisen: document.getElementById('log-einreisen') };
         for(let key in containers) { containers[key].innerHTML = ""; }
         let counts = { uprank: 0, kick: 0, support: 0, einreisen: 0 };
-        
         textLogs.forEach(l => {
             if(containers[l.cat]) {
                 counts[l.cat]++;
-                containers[l.cat].innerHTML += `<div class="log-item">
-                    <span><strong>[${l.time}]</strong> ${l.msg}</span>
-                    <span class="log-delete" onclick="removeLog(${l.id})">&times;</span>
-                </div>`;
+                containers[l.cat].innerHTML += `<div class="log-item"><span><strong>[${l.time}]</strong> ${l.msg}</span><span class="log-delete" onclick="removeLog(${l.id})">&times;</span></div>`;
             }
         });
-        
-        for(let key in containers) {
-            if(counts[key] === 0) { containers[key].innerHTML = '<p style="color:#555; font-size:0.85rem;">Keine Einträge.</p>'; }
+        for(let key in containers) { if(counts[key] === 0) { containers[key].innerHTML = '<p style="color:#555; font-size:0.8rem;">Keine Einträge.</p>'; } }
+    }
+
+    // LIVE PINNWAND NETZWERK-STEUERUNG
+    async function loadLiveNotes() {
+        try {
+            let res = await fetch(BIN_URL, { headers: { "X-Master-Key": MASTER_KEY } });
+            let data = await res.json();
+            liveNotes = data.record.notes || [];
+            renderLiveNotes();
+        } catch (err) { console.log("Fehler beim Abrufen der Live-Pinnwand:", err); }
+    }
+
+    function renderLiveNotes() {
+        let box = document.getElementById('pinnwand-notes-list');
+        if (liveNotes.length === 0) {
+            box.innerHTML = '<p style="text-align:center; color:#a0aec0; padding:10px;">Derzeit keine aktiven Aushänge auf der Pinnwand.</p>';
+            return;
         }
+        let html = "";
+        liveNotes.forEach((n, index) => {
+            html += `<div class="board-note">
+                <span class="log-delete" style="position:absolute; top:10px; right:15px;" onclick="deleteLiveNote(${index})">&times; Löschen</span>
+                <div class="note-meta">[${n.time}] Von: ${n.author}</div>
+                <div class="note-text">${n.text}</div>
+            </div>`;
+        });
+        box.innerHTML = html;
+    }
+
+    async function addLiveNote() {
+        let author = document.getElementById('note-author').value.trim();
+        let text = document.getElementById('note-content').value.trim();
+        if (!author || !text) return alert("Bitte Name und Notiz-Inhalt ausfüllen, Bro!");
+        
+        let now = new Date().toLocaleDateString('de-DE') + " " + new Date().toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+        liveNotes.unshift({ time: now, author: author, text: text });
+        
+        document.getElementById('note-content').value = "";
+        renderLiveNotes();
+        await saveNotesToCloud();
+    }
+
+    async function deleteLiveNote(index) {
+        if (!confirm("Möchtest du diese Notiz wirklich von der globalen Pinnwand löschen?")) return;
+        liveNotes.splice(index, 1);
+        renderLiveNotes();
+        await saveNotesToCloud();
+    }
+
+    async function saveNotesToCloud() {
+        try {
+            await fetch(BIN_URL, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", "X-Master-Key": MASTER_KEY },
+                body: JSON.stringify({ notes: liveNotes })
+            });
+        } catch (err) { alert("Live-Speicherungsfehler, versuch es noch mal, Bro!"); }
     }
 
     function calculateAiUpranks() {
-        let aiDiv = document.getElementById('ai-suggestions');
-        let suggestions = [];
-
+        let aiDiv = document.getElementById('ai-suggestions'); let suggestions = [];
         for (let name in stats) {
-            let user = stats[name];
-            let totalEinreisen = user.einreisen || 0;
-            
+            let user = stats[name]; let totalEinreisen = user.einreisen || 0;
             if (user.tickets + user.supports >= 5 || user.feedbacks >= 3 || totalEinreisen >= 10) {
-                suggestions.push({
-                    name: name,
-                    reason: `Starke Leistungswerte auf der aktuellen Position (🎫 ${user.tickets} | 🛠️ ${user.supports} | ⭐ ${user.feedbacks} | 🛃 ${totalEinreisen}).`
-                });
+                suggestions.push({ name: name, reason: `Starke Leistungswerte auf der aktuellen Position (🎫 ${user.tickets} | 🛠️ ${user.supports} | ⭐ ${user.feedbacks} | 🛃 ${totalEinreisen}).` });
             }
         }
-
-        if(suggestions.length === 0) {
-            aiDiv.innerHTML = `<div style="font-size:0.85rem; color:#a0aec0; text-align:center; padding:10px;">Vergib Punkte, um automatische Uprank-Tipps zu erhalten.</div>`;
-        } else {
-            let html = "";
-            suggestions.forEach(s => {
-                html += `<div class="ai-item">
-                    <div class="ai-header">🚀 Uprank Tipp: ${s.name}</div>
-                    <div class="ai-reason">${s.reason}</div>
-                </div>`;
-            });
+        if(suggestions.length === 0) { aiDiv.innerHTML = `<div style="font-size:0.8rem; color:#a0aec0; text-align:center; padding:10px;">Vergib Punkte, um automatische Uprank-Tipps zu erhalten.</div>`; } 
+        else {
+            let html = ""; suggestions.forEach(s => { html += `<div class="ai-item"><div class="ai-header">🚀 Uprank Tipp: ${s.name}</div><div class="ai-reason">${s.reason}</div></div>`; });
             aiDiv.innerHTML = html;
         }
     }
 
     document.body.style.display = 'block';
-    initStats();
-    renderTeam();
+    initStats(); renderTeam(); renderLogs(); calculateAiUpranks();
 </script>
 
 </body>
