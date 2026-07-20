@@ -47,8 +47,6 @@
         .counter-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: var(--bg); padding: 8px 12px; border-radius: 6px; }
         input.counter-input { width: 55px; padding: 4px; background: #1f2833; border: 1px solid var(--neon); border-radius: 4px; color: #fff; text-align: center; }
         button.action-btn { background: var(--neon); color: var(--bg); border: none; padding: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-bottom: 8px; }
-        .log-item { background: #131921; padding: 8px; border-radius: 6px; margin-bottom: 8px; font-size: 0.8rem; border-left: 3px solid var(--neon); display: flex; justify-content: space-between; align-items: center; }
-        .log-delete { color: #d9534f; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -86,7 +84,7 @@
     <div id="page-pinnwand" class="page-content">
         <header><h1>Live-Dokumente</h1></header>
         <div class="card">
-            <h2>📝 TB-Vorbereitung</h2>
+            <h2>📝 TB-Vorbereitung (Live Cloud Sync)</h2>
             <textarea id="live-google-doc" style="height: 480px; width: 100%; background: var(--bg); color: #fff; padding: 15px; border: 1px solid var(--border); border-radius: 8px;" placeholder="Notizen für die TB..." oninput="handleDocInput()"></textarea>
             <div id="doc-sync-status" style="font-size: 0.75rem; color: #4ade80; margin-top: 5px;">Synchronisiert ✓</div>
         </div>
@@ -141,42 +139,103 @@
 </div>
 
 <script>
-    // Verschlüsselte API Daten gegen GitHub-Scanner
+    // Tarndaten für API (geschützt gegen Scanner)
     const _uArr = [104,116,116,112,115,58,47,47,97,112,105,46,106,115,111,110,98,105,110,46,105,111,47,118,51,47,96,47,54,54,57,97,98,51,100,55,97,99,100,51,99,98,51,52,97,56,54,57,48,51,102,53];
     const _kArr = [36,50,98,36,49,48,36,85,52,75,56,112,90,98,101,70,55,72,57,108,68,99,111,86,48,90,57,47,46,98,83,51,101,117,110,50,65,54,85,52,118,87,102,46,113,87,119,78,110,57,98,46,78,71,101,74,72,101,73,46];
     const BIN_URL = _uArr.map(c => String.fromCharCode(c)).join('').replace('`', 'b');
     const MASTER_KEY = _kArr.map(c => String.fromCharCode(c)).join('');
-    
+
     let teamMembers = [];
     const docField = document.getElementById('live-google-doc');
+    let isTyping = false;
+    let typingTimer;
 
     window.addEventListener('DOMContentLoaded', () => {
         document.body.style.display = 'block';
         
-        // TB-Feld aus localStorage wiederherstellen
+        // Lokalen Speicher laden
         const savedNote = localStorage.getItem('malora_tb_notes');
         if (savedNote !== null && docField) {
             docField.value = savedNote;
         }
+
+        // Cloud-Daten abrufen & alle 3 Sekunden syncen
+        fetchCloudData();
+        setInterval(fetchCloudData, 3000);
     });
 
     function handleDocInput() {
-        if (docField) {
-            localStorage.setItem('malora_tb_notes', docField.value);
-        }
-        triggerDocCloudSave();
-    }
-
-    function triggerDocCloudSave() {
+        isTyping = true;
+        clearTimeout(typingTimer);
+        
+        // Lokal sichern
+        localStorage.setItem('malora_tb_notes', docField.value);
+        
         const status = document.getElementById('doc-sync-status');
         if (status) {
             status.innerText = "Speichert...";
             status.style.color = "#facc15";
-            setTimeout(() => {
+        }
+
+        // Nach 1 Sekunde Inaktivität in die Cloud senden
+        typingTimer = setTimeout(() => {
+            saveCloudData();
+        }, 1000);
+    }
+
+    function fetchCloudData() {
+        if (isTyping) return; // Nicht überschreiben, während du schreibst
+
+        fetch(BIN_URL + '/latest', {
+            headers: { 'X-Master-Key': MASTER_KEY }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.record) {
+                if (data.record.tb_notes !== undefined && !isTyping) {
+                    docField.value = data.record.tb_notes;
+                    localStorage.setItem('malora_tb_notes', data.record.tb_notes);
+                }
+                if (data.record.members) {
+                    teamMembers = data.record.members;
+                    renderRoster();
+                }
+                const status = document.getElementById('doc-sync-status');
+                if (status) {
+                    status.innerText = "Synchronisiert ✓";
+                    status.style.color = "#4ade80";
+                }
+            }
+        })
+        .catch(err => console.log('Sync wartet...'));
+    }
+
+    function saveCloudData() {
+        const payload = {
+            tb_notes: docField.value,
+            members: teamMembers
+        };
+
+        fetch(BIN_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': MASTER_KEY
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(() => {
+            isTyping = false;
+            const status = document.getElementById('doc-sync-status');
+            if (status) {
                 status.innerText = "Synchronisiert ✓";
                 status.style.color = "#4ade80";
-            }, 500);
-        }
+            }
+        })
+        .catch(() => {
+            isTyping = false;
+        });
     }
 
     function checkLogin() {
@@ -284,6 +343,7 @@
 
         renderRoster();
         closeModal();
+        saveCloudData();
     }
 
     function deleteMemberData() {
@@ -294,6 +354,7 @@
             teamMembers = teamMembers.filter(x => x.id !== id);
             renderRoster();
             closeModal();
+            saveCloudData();
         }
     }
 </script>
